@@ -231,6 +231,10 @@
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>pl</ResourceId>
         </RcItem>
+        <RcItem Include="res\ru.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>ru</ResourceId>
+        </RcItem>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
