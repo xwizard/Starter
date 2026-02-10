@@ -62,7 +62,7 @@ type
 implementation
 
 uses SysUtils, uMain, uUtilities, Character, Math {$IFDEF DEBUG}{,System.Diagnostics}{$ENDIF}, uData,// uStart,
-    System.WideStrUtils, uSettingsAdv, uStart, strUtils, System.Diagnostics;
+    System.WideStrUtils, uSettingsAdv, uStart, strUtils, System.Diagnostics, uI18nCtx;
 
 {$IFDEF DEBUG}
 {procedure Measure;
@@ -197,10 +197,10 @@ begin
         if Pos('-',Lexer.Token) = 6 then
         begin
           Result.AI := True;
-          Result.Desc := Copy(Lexer.Token,7,Lexer.TokenLen);
+          Result.Desc := TrToken(Copy(Lexer.Token,7,Lexer.TokenLen));
         end
         else
-          Result.Desc := Copy(Lexer.Token,6,Lexer.TokenLen);
+          Result.Desc := TrToken(Copy(Lexer.Token,6,Lexer.TokenLen));
 
       if Pos('//$r',Lexer.Token) > 0 then
         Result.TimeTable := Copy(Lexer.Token,6,Lexer.TokenLen);
@@ -668,6 +668,22 @@ begin
   end;
 end;
 
+function TranslateFileLabel(const Line: string): string;
+var
+  p: Integer;
+  LeftPart, LabelPart: string;
+begin
+  Result := Line;
+  p := LastDelimiter(' ', Line);
+  if p <= 0 then Exit;
+
+  LeftPart := Copy(Line, 1, p-1);
+  LabelPart := Trim(Copy(Line, p+1, MaxInt));
+
+  if (LabelPart <> '') and (LabelPart[1] = '@') then
+    Result := LeftPart + ' ' + TrToken(LabelPart);
+end;
+
 function TLexParser.ScenarioName(const Path:string):TScenario;
 var
   Plik : TSList;
@@ -677,6 +693,7 @@ begin
   Result.Path := Path;
   Result.Name := ExtractFileName(Path);
   Result.Name := Copy(Result.Name,0,Result.Name.Length-4);
+  LoadScenarioI18n(Util.DIR + 'scenery\', Result.Name);
 
   Plik := TSList.Create;
   Plik.LoadFromFile(Path);
@@ -687,17 +704,23 @@ begin
   begin
     if Lexer.TokenID = ptSlashesComment then
       begin
-        if Pos('$n', Lexer.Token) > 0 then Result.Title := Copy(Lexer.Token,6,Lexer.TokenLen)
+        if Pos('$n', Lexer.Token) > 0 then
+          Result.Title := TrToken(Copy(Lexer.Token,6,Lexer.TokenLen))
         else
-        if Pos('$d', Lexer.Token) > 0 then Result.Desc.Add(Copy(Lexer.Token,6,Lexer.TokenLen))
+        if Pos('$d', Lexer.Token) > 0 then
+          Result.Desc.Add(TrToken(Copy(Lexer.Token,6,Lexer.TokenLen)))
         else
-        if Pos('$f', Lexer.Token) > 0 then Result.Files.Add(Copy(Lexer.Token,6,Lexer.TokenLen))
+        if Pos('$f', Lexer.Token) > 0 then
+          Result.Files.Add(TranslateFileLabel(Copy(Lexer.Token,6,Lexer.TokenLen)))
         else
-        if Pos('$i', Lexer.Token) > 0 then Result.Image := Copy(Lexer.Token,6,Lexer.TokenLen)
+        if Pos('$i', Lexer.Token) > 0 then
+          Result.Image := Copy(Lexer.Token,6,Lexer.TokenLen)
         else
-        if Pos('$l', Lexer.Token) > 0 then Result.ID := Copy(Lexer.Token,6,Lexer.TokenLen)
+        if Pos('$l', Lexer.Token) > 0 then
+          Result.ID := TrToken(Copy(Lexer.Token,6,Lexer.TokenLen))
         else
-        if Pos('$a', Lexer.Token) > 0 then Result.Old := True;
+        if Pos('$a', Lexer.Token) > 0 then
+          Result.Old := True;
       end
       else
         if Lexer.TokenID = ptSlash then
@@ -736,7 +759,7 @@ var
   SkipNextToken : Boolean;
 begin
   Util.LogAdd('-> Parsowanie scenerii ' + SCN.Name);
-
+  LoadScenarioI18n(Util.DIR + 'scenery\', SCN.Name);
   SkipNextToken := False;
 
   with TLexParser.Create do
