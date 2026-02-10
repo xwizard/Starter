@@ -48,7 +48,7 @@ type
 
 implementation
 
-uses uMain, ShellApi, System.UITypes, uUtilities;
+uses uMain, ShellApi, System.UITypes, uUtilities, uLanguages;
 
 {$R *.dfm}
 
@@ -82,22 +82,22 @@ begin
         if Version <= AppVersion then
         begin
           if ReturnInfo then
-            ShowMessage(Util.LabelStr(CAP_CURRENT_VERSION));
+            ShowMessage(Lang.LabelStr(TEXT_CURRENT_VERSION));
         end
         else
         begin
           Hide;
-          if Util.Ask(Util.LabelStr(CAP_NEWER_VERSION_ASK)) then
+          if Util.Ask(Lang.LabelStr(TEXT_NEWER_VERSION_ASK)) then
             UpdateApp(UpdateFile);
         end;
       end;
     except
       on E: Exception do
       begin
-        Util.Log.Add(Util.LabelStr(CAP_UPDATE_FAULT) + ' ' + E.Message);
+        Util.Log.Add(Lang.LabelStr(TEXT_UPDATE_FAULT) + ' ' + E.Message);
 
         if ReturnInfo then
-          ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
+          ShowMessage(Lang.LabelStr(TEXT_UPDATE_FAULT_EXT) + #13#10 + Lang.LabelStr(TEXT_FAULT_DETAIL) + ' ' + E.Message);
       end;
     end;
   finally
@@ -130,7 +130,7 @@ begin
   Par := TStringList.Create;
   try
     try
-      lbUpdate.Caption := Util.LabelStr(CAP_UPDATING);
+      lbUpdate.Caption := Lang.LabelStr(TEXT_UPDATING);
       Main.Cursor := crHourGlass;
       Application.ProcessMessages;
 
@@ -150,10 +150,10 @@ begin
       if FileExists(Util.DIR + 'update.bat') then
         AutoUpdate
       else
-        ShowMessage(Util.LabelStr(CAP_UPDATED_PROGRAM));
+        ShowMessage(Lang.LabelStr(TEXT_UPDATED_PROGRAM));
     except
       on E: Exception do
-        ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
+        ShowMessage(Lang.LabelStr(TEXT_UPDATE_FAULT_EXT) + #13#10 + Lang.LabelStr(TEXT_FAULT_DETAIL) + ' ' + E.Message);
     end;
   finally
     pbProgress.Visible := False;
@@ -179,7 +179,7 @@ begin
       ShellExecute(Main.Handle, 'open', 'update.bat', nil, nil, SW_HIDE);
   except
     on E: Exception do
-      ShowMessage(Util.LabelStr(CAP_UPDATE_FAULT_EXT) + #13#10 + Util.LabelStr(CAP_FAULT_DETAIL) + ' ' + E.Message);
+      ShowMessage(Lang.LabelStr(TEXT_UPDATE_FAULT_EXT) + #13#10 + Lang.LabelStr(TEXT_FAULT_DETAIL) + ' ' + E.Message);
   end;
 end;
 

@@ -87,7 +87,7 @@ type
 
 implementation
 
-uses uMain, uData, uUtilities, uRules;
+uses uMain, uData, uUtilities, uRules, uLanguages;
 
 {$R *.dfm}
 
@@ -117,7 +117,7 @@ begin
     end;
   except
     on E: Exception do
-        Util.Log.Add('B³¹d wczytywania regu³ (starter\reguly.txt). Szczegó³y b³êdu: ' + E.Message);
+        Util.Log.Add(Lang.LabelStr(TEXT_LOADRULESFAULT,[E.Message]));
   end;
 end;
 
@@ -200,7 +200,7 @@ begin
     ShowMessage(s);}
   except
     on E: Exception do
-        Util.Log.Add('B³¹d wyszukiwania tekstur. Szczegó³y b³êdu: ' + E.Message);
+        Util.Log.Add(Lang.LabelStr(TEXT_FINDSIMILARTEXFAULT,[E.Message]));
   end;
 end;
 
@@ -394,7 +394,7 @@ begin
     end;
   except
     on E: Exception do
-        Util.Log.Add('B³¹d edycji pojazdu. Szczegó³y b³êdu: ' + E.Message);
+        Util.Log.Add(Lang.LabelStr(TEXT_MULTIPLEASSIGNFAULT,[E.Message]));
   end;
 end;
 

@@ -35,9 +35,11 @@ TData = class
   Loads       : TList<TLoad>;
 
   constructor Create;
-  function LoadsIndex(const LoadName:string):Integer;
+  function LoadDescByName(const Name: string): string;
+  function LoadsDesc(const aLoads: string): TStringList;
   private
     procedure TexturesEmptyElement;
+    function LoadWeight(const LoadName: string): Integer;
 end;
 
 function GetMaxCoupler(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):Integer;
@@ -62,7 +64,7 @@ var
 
 implementation
 
-uses SysUtils, StrUtils, Math;
+uses SysUtils, StrUtils, Math, uLanguages;
 
 function GetMaxCoupler(const Vehicle:TVehicle;const LeftCoupler:Boolean=True):Integer;
 begin
@@ -76,8 +78,8 @@ begin
         Result := IfThen(Vehicle.Dist >= 0,Vehicle.Fiz.AllowedFlagB,Vehicle.Fiz.AllowedFlagA);
     end;
   except
-    Util.Log.Add(Util.LabelStr(TLabels.LOG_CHECK_VALUE_FAULT) + ' AllowedFlag. ' +
-                    Util.LabelStr(TLabels.LOG_CHECK_PHYSICS_FILE) + ' ' +
+    Util.Log.Add(Lang.LabelStr(TLabels.TEXT_CHECK_VALUE_FAULT) + ' AllowedFlag. ' +
+                    Lang.LabelStr(TLabels.TEXT_CHECK_PHYSICS_FILE) + ' ' +
                     Vehicle.Texture.Models[Vehicle.ModelID].Model);
   end;
 end;
@@ -95,24 +97,49 @@ begin
     else
       Result := EmptyStr;
   except
-    Util.Log.Add(Util.LabelStr(TLabels.LOG_CHECK_VALUE_FAULT) + ' ControlType. ' +
-                 Util.LabelStr(TLabels.LOG_CHECK_PHYSICS_FILE) + ' ' +
+    Util.Log.Add(Lang.LabelStr(TLabels.TEXT_CHECK_VALUE_FAULT) + ' ControlType. ' +
+                 Lang.LabelStr(TLabels.TEXT_CHECK_PHYSICS_FILE) + ' ' +
                  Vehicle.Texture.Models[Vehicle.ModelID].Model);
   end;
 end;
 
-function TData.LoadsIndex(const LoadName:string):Integer;
+function TData.LoadWeight(const LoadName:string):Integer;
+var
+  Load : TLoad;
+begin
+  Result := 1000;
+
+  for Load in Loads do
+    if SameText(LoadName,Load.Name) then
+    begin
+      Result := Load.Weight;
+      Break;
+    end;
+end;
+
+function TData.LoadDescByName(const Name:string):string;
 var
   i : Integer;
 begin
-  Result := -1;
+  Result := LowerCase(Name);
 
   for i := 0 to Loads.Count-1 do
-    if SameText(LoadName,Loads[i].Name) then
+    if SameText(Result,Loads[i].Name) then
     begin
-      Result := i;
+      Result := Loads[i].Desc;
       Break;
     end;
+end;
+
+function TData.LoadsDesc(const aLoads:string):TStringList;
+var
+  i : Integer;
+begin
+  Result := TStringList.Create;
+  ExtractStrings([','],[],PChar(aLoads),Result);
+
+  for i := 0 to Result.Count-1 do
+    Result[i] := LoadDescByName(Result[i]);
 end;
 
 function GetMultiple(const Vehicles:TObjectList<TVehicle>;const Index:Integer):TList<Integer>;
@@ -240,7 +267,7 @@ begin
       end;
   end
   else
-    Result := Format(Util.LabelStr(TLabels.CAP_NO_VEHICLES),[Trainset.Track]);
+    Result := Lang.LabelStr(TLabels.TEXT_NO_VEHICLES,[Trainset.Track]);
 end;
 
 function PrepareNode(const Dyn:TVehicle;const TrainSet:Boolean=True):string;
@@ -298,7 +325,7 @@ begin
   else
     Result := Result + ' 0';
 
-  if (Dyn.LoadType.Length > 0) and (Dyn.Loadquantity > 0) then
+  if (Dyn.LoadType.Length > 0) and ((Dyn.Loadquantity > 0) or (SameText(Dyn.LoadType,'pantstate'))) then
     Result := Result + ' ' + Dyn.LoadType;
 
   Result := Result + ' enddynamic';
@@ -335,7 +362,7 @@ end;
 
 function RecalcTrainParams(const Train:TTrain;const AllVehicles:Boolean=False):TTrainParams;
 var
-  i, LoadIndex : Integer;
+  i : Integer;
 begin
   Result.Length   := 0;
   Result.Mass     := 0;
@@ -349,17 +376,10 @@ begin
         Result.Mass := Result.Mass + Train.Vehicles[i].Fiz.Mass;
 
         if ContainsText(Train.Vehicles[i].Texture.Models[Train.Vehicles[i].ModelID].Fiz.LoadAccepted,Train.Vehicles[i].LoadType) then
-        begin
-          LoadIndex := Data.LoadsIndex(Train.Vehicles[i].LoadType);
-
-          if LoadIndex >= 0 then
-            Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * Data.Loads[LoadIndex].Weight)
-          else
-            Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * 1000);
-        end
+          Result.LoadMass := Result.LoadMass + (Train.Vehicles[i].Loadquantity * Data.LoadWeight(Train.Vehicles[i].LoadType))
         else
           if not Train.Vehicles[i].LoadType.IsEmpty then
-            Util.Log.Add(Train.Vehicles[i].Name + ' - ' + Util.LabelStr(TLabels.LOG_UNSUPPORTED_LOAD));
+            Util.Log.Add(Train.Vehicles[i].Name + ' - ' + Lang.LabelStr(TLabels.TEXT_UNSUPPORTED_LOAD));
       end;
 
       if Train.Vehicles[i].Fiz <> nil then

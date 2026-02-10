@@ -40,7 +40,7 @@ type
 
 implementation
 
-uses SysUtils, uMain, uUtilities;
+uses SysUtils, uMain, uUtilities, uLanguages;
 
 constructor TLexer.Create;
 begin
@@ -96,7 +96,7 @@ begin
     else
       Result := GetToken;
   except
-    Util.Log.Add(Util.LabelStr(TLabels.LOG_PHYSICS_PARSE_FAULT) + ' ' + Lexer.Token);
+    Util.Log.Add(Lang.LabelStr(TLabels.TEXT_PHYSICS_PARSE_FAULT) + ' ' + Lexer.Token);
   end;
 end;
 

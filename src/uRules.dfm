@@ -31,9 +31,6 @@ object frmRules: TfrmRules
     ShowHint = False
     TabOrder = 0
     OnClick = lbRulesClick
-    ExplicitLeft = 8
-    ExplicitTop = 8
-    ExplicitWidth = 513
   end
   object btnSave: TButton
     Left = 0
@@ -43,7 +40,6 @@ object frmRules: TfrmRules
     Action = actSave
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 320
   end
   object pnlBottom: TPanel
     Left = 0
@@ -53,8 +49,6 @@ object frmRules: TfrmRules
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitLeft = -8
-    ExplicitTop = 348
     object cbTypes: TComboBox
       Left = 3
       Top = 3

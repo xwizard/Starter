@@ -283,11 +283,12 @@ type
   TLoad = class
     Name    : string;
     Weight  : Integer;
+    Desc    : string;
   end;
 
   TSList = class(TStringList)
     public
-      constructor Create;// override;
+      constructor Create;
   end;
 
 const

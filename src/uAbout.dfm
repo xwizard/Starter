@@ -44,27 +44,25 @@ object frmAbout: TfrmAbout
     object lbVersion: TLabel
       Left = 0
       Top = 36
-      Width = 300
+      Width = 98
       Height = 13
       Align = alTop
       Alignment = taCenter
       Caption = 'Wersja: 7.9.4 64-bit'
       ParentShowHint = False
       ShowHint = True
-      ExplicitWidth = 98
     end
     object Label11: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 49
-      Width = 294
+      Width = 116
       Height = 13
       Margins.Top = 0
       Align = alTop
       Alignment = taCenter
       Caption = 'dla symulatora MaSzyna'
       WordWrap = True
-      ExplicitWidth = 116
     end
     object Label3: TLabel
       AlignWithMargins = True
@@ -90,52 +88,48 @@ object frmAbout: TfrmAbout
       AlignWithMargins = True
       Left = 3
       Top = 99
-      Width = 294
+      Width = 100
       Height = 13
       Margins.Top = 10
       Align = alBottom
       Alignment = taCenter
       Caption = 'G'#322#243'wny programista:'
       Layout = tlBottom
-      ExplicitWidth = 100
     end
     object lbLicense: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 68
-      Width = 294
+      Width = 163
       Height = 13
       Align = alTop
       Alignment = taCenter
       Caption = 'Wydany na licencji GNU GPL v3.0.'
       WordWrap = True
-      ExplicitWidth = 163
     end
     object lbTesters: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 150
-      Width = 294
+      Width = 78
       Height = 13
       Margins.Top = 10
       Align = alBottom
       Alignment = taCenter
       Caption = 'Testy, sugestie:'
       Layout = tlBottom
-      ExplicitWidth = 78
     end
     object lbTranslators: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 265
-      Width = 294
+      Width = 63
       Height = 13
       Margins.Top = 10
       Align = alBottom
       Alignment = taCenter
       Caption = 'T'#322'umaczenia:'
       Layout = tlBottom
-      ExplicitWidth = 63
     end
     object Label8: TLabel
       AlignWithMargins = True
@@ -202,6 +196,11 @@ object frmAbout: TfrmAbout
       Height = 311
       Align = alClient
       Lines.Strings = (
+        '7.21 (15.11.2025)'
+        '*rozw'#243'j systemu obs'#322'ugi j'#281'zyka'
+        '*obs'#322'uga t'#322'umacze'#324' nazw '#322'adunk'#243'w'
+        '*dodany multisampling x16'
+        ''
         '7.20 (6.11.2025)'
         '*poprawione wy'#347'wietlanie danych o wybranym '
         'poje'#378'dzie z .mmd'
@@ -263,10 +262,6 @@ object frmAbout: TfrmAbout
         '*wykrywanie zmian ustawie'#324' tylko po pe'#322'nym '
         'uruchomieniu programu'
         '*t'#322'umaczenie na j'#281'zyk w'#281'gierski'
-        ''
-        '7.13 (13.01.2023)'
-        '*rozdzielenie opcji losowej kolejnosci i obr'#243'cenia'
-        '*obs'#322'uga opcji archiwalne pojazdy'
         ''
         '...')
       ReadOnly = True

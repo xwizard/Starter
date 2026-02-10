@@ -14,7 +14,6 @@ object frmTextureBase: TfrmTextureBase
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object spSplitter: TSplitter
     Left = 0
