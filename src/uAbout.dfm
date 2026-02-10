@@ -3,7 +3,7 @@ object frmAbout: TfrmAbout
   Top = 0
   BorderStyle = bsDialog
   Caption = 'O programie'
-  ClientHeight = 336
+  ClientHeight = 369
   ClientWidth = 594
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object frmAbout: TfrmAbout
     Left = 294
     Top = 0
     Width = 300
-    Height = 336
+    Height = 369
     Align = alRight
     BevelOuter = bvNone
     ShowCaption = False
@@ -44,30 +44,32 @@ object frmAbout: TfrmAbout
     object lbVersion: TLabel
       Left = 0
       Top = 36
-      Width = 98
+      Width = 300
       Height = 13
       Align = alTop
       Alignment = taCenter
       Caption = 'Wersja: 7.9.4 64-bit'
       ParentShowHint = False
       ShowHint = True
+      ExplicitWidth = 98
     end
     object Label11: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 49
-      Width = 116
+      Width = 294
       Height = 13
       Margins.Top = 0
       Align = alTop
       Alignment = taCenter
       Caption = 'dla symulatora MaSzyna'
       WordWrap = True
+      ExplicitWidth = 116
     end
     object Label3: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 118
+      Top = 132
       Width = 294
       Height = 19
       Hint = 'damian.skrzek@szczawik.net'
@@ -83,58 +85,63 @@ object frmAbout: TfrmAbout
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
+      ExplicitTop = 118
     end
     object lbProgrammer: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 99
-      Width = 100
+      Top = 113
+      Width = 294
       Height = 13
       Margins.Top = 10
       Align = alBottom
       Alignment = taCenter
       Caption = 'G'#322#243'wny programista:'
       Layout = tlBottom
+      ExplicitWidth = 100
     end
     object lbLicense: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 68
-      Width = 163
+      Width = 294
       Height = 13
       Align = alTop
       Alignment = taCenter
       Caption = 'Wydany na licencji GNU GPL v3.0.'
       WordWrap = True
+      ExplicitWidth = 163
     end
     object lbTesters: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 150
-      Width = 78
+      Top = 164
+      Width = 294
       Height = 13
       Margins.Top = 10
       Align = alBottom
       Alignment = taCenter
       Caption = 'Testy, sugestie:'
       Layout = tlBottom
+      ExplicitWidth = 78
     end
     object lbTranslators: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 265
-      Width = 63
+      Top = 279
+      Width = 294
       Height = 13
       Margins.Top = 10
       Align = alBottom
       Alignment = taCenter
       Caption = 'T'#322'umaczenia:'
       Layout = tlBottom
+      ExplicitWidth = 63
     end
     object Label8: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 169
+      Top = 183
       Width = 294
       Height = 83
       Align = alBottom
@@ -152,28 +159,28 @@ object frmAbout: TfrmAbout
     object Label9: TLabel
       AlignWithMargins = True
       Left = 3
-      Top = 284
+      Top = 298
       Width = 294
-      Height = 32
+      Height = 51
       Margins.Bottom = 20
       Align = alBottom
       Alignment = taCenter
       AutoSize = False
-      Caption = '@Traktor175 (CZ)'#13#10'@guih48 (HU)'
+      Caption = '@Traktor175 (CZ)'#13#10'@guih48 (HU)'#13#10'GitHub@sentoz (RU)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
-      ExplicitTop = 280
+      ExplicitTop = 273
     end
   end
   object pnlLog: TPanel
     Left = 0
     Top = 0
     Width = 294
-    Height = 336
+    Height = 369
     Align = alClient
     BevelOuter = bvNone
     ShowCaption = False
@@ -193,13 +200,17 @@ object frmAbout: TfrmAbout
       Left = 3
       Top = 22
       Width = 288
-      Height = 311
+      Height = 344
       Align = alClient
       Lines.Strings = (
-        '7.21 (15.11.2025)'
+        '7.21 (10.02.2026)'
         '*rozw'#243'j systemu obs'#322'ugi j'#281'zyka'
         '*obs'#322'uga t'#322'umacze'#324' nazw '#322'adunk'#243'w'
         '*dodany multisampling x16'
+        '*zmiana kodowania plik'#243'w j'#281'zykowych Startera na '
+        'UTF-8'
+        '*dodane t'#322'umaczenie na j'#281'zyk rosyjski'
+        '*dodana grupa wagon'#243'w T'
         ''
         '7.20 (6.11.2025)'
         '*poprawione wy'#347'wietlanie danych o wybranym '

@@ -256,8 +256,7 @@ begin
   if FileExists(Util.DIR + 'starter\lang-' + LangStr + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt');
-
+    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt',TEncoding.UTF8);
     i := 0;
     while (Pos('<loads>',LangFile[i]) = 0) and (i < LangFile.Count-1) do
         Inc(i);
@@ -300,7 +299,7 @@ begin
   if FileExists(Util.DIR + 'starter\lang-' + LangStr + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt');
+    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt',TEncoding.UTF8);
 
     i := 0;
     while (Pos('<labels>',LangFile[i]) = 0) and (i < LangFile.Count-1) do
@@ -341,7 +340,7 @@ begin
   if FileExists(Util.DIR + 'starter\lang-' + LangStr + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt');
+    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt',TEncoding.UTF8);
 
     i := 0;
     while (Pos('[' + Form.Name,LangFile[i]) = 0) and (i < LangFile.Count-1) do
@@ -408,7 +407,7 @@ begin
   if FileExists(Util.DIR + 'starter\lang-' + LangStr + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt');
+    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt',TEncoding.UTF8);
 
     i := 0;
     while (Pos('<' + 'eu07_input-keyboard.ini',LangFile[i]) = 0) and (i < LangFile.Count-1) do

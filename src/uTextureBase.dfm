@@ -107,6 +107,7 @@ object frmTextureBase: TfrmTextureBase
         'Wagony P'
         'Wagony R'
         'Wagony S'
+        'Wagony T'
         'Wagony U'
         'Wagony V'
         'Wagony W'
