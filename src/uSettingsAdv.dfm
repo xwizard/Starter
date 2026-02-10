@@ -40,11 +40,10 @@ object frmSettingsAdv: TfrmSettingsAdv
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 659
+          Width = 65
           Height = 13
           Align = alTop
           Caption = 'Podgl'#261'd logu:'
-          ExplicitWidth = 65
         end
         object meLog: TMemo
           AlignWithMargins = True

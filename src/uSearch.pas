@@ -168,8 +168,8 @@ end;
 
 procedure TfrmSearch.FormCreate(Sender: TObject);
 begin
-  if Util.Lang <> 'pl' then
-    TLanguages.ChangeLanguage(Self,Util.Lang);
+  if Util.LangStr <> 'pl' then
+    TLang.ChangeLanguage(Self,Util.LangStr);
   cbSearchType.ItemIndex := 0;
 end;
 

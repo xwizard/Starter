@@ -28,14 +28,14 @@ pnlVisibility.Caption=Visibility
 lbFogNo.Caption=Good
 lbFog.Caption=Bad
 pnlLabelTemperature.Caption=Temperature
-lbTemperature.Caption=15°C
+lbTemperature.Caption=15Â°C
 pnlTime.Caption=Time:
 lbCloudy.Caption=Cloudiness
 cbOvercast.Items.Text=Random|Cloudless|Partly Cloudy|Cloudy|Full|Drizzle|Shower|
 pnlLabelDay.Caption=Day of the year
 lbTime.Caption=Time:
 tsMagazine.Caption=Depot
-cbTypes.Items.Text=Electric|Diesel|Steam|Railcar|EMU|Car A|Car B|Car D|Car E|Car F|Car G|Car H|Car I|Car L|Car P|Car R|Car S|Car U|Car V|Car W|Car X|Car Z|Work train|Push-trolley|Tram|Motorcar|Bus|Truck|People|Animals|Prototypes|Other|
+cbTypes.Items.Text=Electric|Diesel|Steam|Railcar|EMU|Car A|Car B|Car D|Car E|Car F|Car G|Car H|Car I|Car L|Car P|Car R|Car S|Car T|Car U|Car V|Car W|Car X|Car Z|Work train|Push-trolley|Tram|Motorcar|Bus|Truck|People|Animals|Prototypes|Other|
 tsSCNTrains.Caption=Trains on scenery
 chTrainMan.Caption=Virtual shunter
 chOnlyForDriving.Caption=Only for driving
@@ -230,7 +230,7 @@ cbRevStart.Caption=Revision since:
 cbRevEnd.Caption=Revision to:
 cbAuthor.Caption=Author:
 cbPhoto.Caption=Photos:
-lbTypes.Items.Text=Electric|Diesel|Steam|Railcar|EMU|Car A|Car B|Car D|Car E|Car F|Car G|Car H|Car I|Car L|Car P|Car R|Car S|Car U|Car V|Car W|Car X|Car Z|Work train|Push-trolley|Tram|Motorcar|Bus|Truck|Other
+lbTypes.Items.Text=Electric|Diesel|Steam|Railcar|EMU|Car A|Car B|Car D|Car E|Car F|Car G|Car H|Car I|Car L|Car P|Car R|Car S|Car T|Car U|Car V|Car W|Car X|Car Z|Work train|Push-trolley|Tram|Motorcar|Bus|Truck|Other
 [frmSettingsAdv]
 Advanced settings
 lbe3d.Caption=Generating E3D:

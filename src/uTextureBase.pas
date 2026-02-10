@@ -94,14 +94,6 @@ type
     { Private declarations }
     SortColumn : Integer;
     Cell : string;
-    const
-      TYPES : array[0..31] of String = (
-        ('Elektrowóz'), ('Spalinowóz'), ('Parowóz'), ('Szynobus'), ('EZT'), ('Roboczy'),
-        ('Drezyna'), ('Tramwaj'), ('Wagon A'), ('Wagon B'), ('Wagon D'), ('Wagon E'),
-        ('Wagon F'), ('Wagon G'), ('Wagon H'), ('Wagon I'), ('Wagon L'), ('Wagon P'), ('Wagon R'),
-        ('Wagon S'), ('Wagon U'), ('Wagon V'), ('Wagon W'), ('Wagon X'), ('Wagon Z'),
-        ('Ciê¿arówka'), ('Autobus'), ('Samochód'), ('Cz³owiek'), ('Zwierzê'), ('Inny'), ('Nieznany')
-        );
     function CheckFilters(const Tex: TTexture;const ModelID:Integer=0): Boolean;
     function AdaptRevDate(RevStr: string): TDate;
   public
@@ -168,22 +160,22 @@ end;
 
 procedure TfrmTextureBase.FormCreate(Sender: TObject);
 begin
-  TLanguages.ChangeLanguage(Self,Util.Lang);
+  TLang.ChangeLanguage(Self,Util.LangStr);
 
-  sgDepo.Cells[0,0] := 'Lp.';
-  sgDepo.Cells[1,0] := 'Tekstura';
-  sgDepo.Cells[2,0] := 'Miniatura';
-  sgDepo.Cells[3,0] := 'Podgl¹d';
-  sgDepo.Cells[4,0] := 'Model';
-  sgDepo.Cells[5,0] := 'Operator';
-  sgDepo.Cells[6,0] := 'Stacja';
-  sgDepo.Cells[7,0] := 'Data rewizji';
-  sgDepo.Cells[8,0] := 'Autor';
-  sgDepo.Cells[9,0] := 'Zdjêcia';
+  sgDepo.Cells[0,0] := Lang.LabelStr(TEXT_LP);
+  sgDepo.Cells[1,0] := Lang.LabelStr(TEXT_TEX);
+  sgDepo.Cells[2,0] := Lang.LabelStr(TEXT_MINI);
+  sgDepo.Cells[3,0] := Lang.LabelStr(TEXT_PREVIEW);
+  sgDepo.Cells[4,0] := Lang.LabelStr(TEXT_MODEL);
+  sgDepo.Cells[5,0] := Lang.LabelStr(TEXT_OPERATOR);
+  sgDepo.Cells[6,0] := Lang.LabelStr(TEXT_STATION);
+  sgDepo.Cells[7,0] := Lang.LabelStr(TEXT_REVDATE);
+  sgDepo.Cells[8,0] := Lang.LabelStr(TEXT_AUTHOR);
+  sgDepo.Cells[9,0] := Lang.LabelStr(TEXT_PHOTO);
 
-  sgModels.Cells[0,0] := 'Lp.';
-  sgModels.Cells[1,0] := 'Kategoria';
-  sgModels.Cells[2,0] := 'Œcie¿ka dostêpu';
+  sgModels.Cells[0,0] := Lang.LabelStr(TEXT_LP);
+  sgModels.Cells[1,0] := Lang.LabelStr(TEXT_CATEGORY);
+  sgModels.Cells[2,0] := Lang.LabelStr(TEXT_PATH);
 end;
 
 procedure TfrmTextureBase.FormShow(Sender: TObject);

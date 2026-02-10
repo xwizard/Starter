@@ -57,6 +57,8 @@ begin
   Application.Initialize;
 
   Util := TUtil.Create;
+  Lang := TLang.Create;
+  Lang.StringsLoad;
   Data := TData.Create;
   TLexParser.LoadData;
   TfrmStart.GetInstance.UpdateLabel('Tworzê okno programu...');

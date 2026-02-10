@@ -85,8 +85,8 @@ uses uUtilities, uData, uMain, uStructures, uLanguages;
 
 procedure TfrmRules.FormCreate(Sender: TObject);
 begin
-  if Util.Lang <> 'pl' then
-    TLanguages.ChangeLanguage(Self,Util.Lang);
+  if Util.LangStr <> 'pl' then
+    TLang.ChangeLanguage(Self,Util.LangStr);
 
   Rules := TList<TStringList>.Create;
 end;
@@ -202,7 +202,7 @@ end;
 procedure TfrmRules.actAddExecute(Sender: TObject);
 begin
   if NameIsInRule(lbRules.ItemIndex,cbModels.Text) then
-    ShowMessage('Taki pojazd jest ju¿ w tej regule.')
+    ShowMessage(Lang.LabelStr(TEXT_NAMEISINRULE))
   else
     RuleAddElement(lbRules.ItemIndex,cbModels.Text);
 end;
@@ -293,7 +293,7 @@ end;
 
 procedure TfrmRules.actButtonClickExecute(Sender: TObject);
 begin
-  if Util.Ask('Usun¹æ wybrany element regu³y?'{Util.LabelStr(CAP_SET_CHANGED)}) then
+  if Util.Ask(Lang.LabelStr(TEXT_REMOVERULEELEMENT)) then
   begin
     RuleElement := ((Sender as TAction).ActionComponent as TButton).Caption;
     Timer.Enabled := True;
@@ -320,7 +320,7 @@ end;
 
 procedure TfrmRules.actSaveExecute(Sender: TObject);
 begin
-  if Util.Ask('Zapisaæ ustalone regu³y?'{Util.LabelStr(CAP_SET_CHANGED)}) then
+  if Util.Ask(Lang.LabelStr(TEXT_SAVERULE)) then
     SaveRules;
 end;
 

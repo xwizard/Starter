@@ -38,7 +38,7 @@ type
 
 implementation
 
-uses uMain, uStructures, SysUtils, CastaliaPasLexTypes, uData, uUtilities;
+uses uMain, uStructures, SysUtils, CastaliaPasLexTypes, uData, uUtilities, uLanguages;
 
 { TDepot }
 
@@ -111,7 +111,7 @@ begin
           Lexer.Next;
       end;
     except
-      Util.Log.Add(Util.LabelStr(LOG_DEPO_PARSE_FAULT) + ' ' + IntToStr(Lexer.LineNumber));
+      Util.Log.Add(Lang.LabelStr(TEXT_DEPO_PARSE_FAULT) + ' ' + IntToStr(Lexer.LineNumber));
     end;
   finally
     Free;
@@ -138,7 +138,7 @@ begin
 
     DepotFile.SaveToFile(Util.DIR + 'starter\magazyn.ini');
   except
-    Util.Log.Add(Util.LabelStr(LOG_DEPO_SAVE_FAULT));
+    Util.Log.Add(Lang.LabelStr(TEXT_DEPO_SAVE_FAULT));
   end;
 end;
 

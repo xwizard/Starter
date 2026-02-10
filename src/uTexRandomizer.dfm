@@ -157,8 +157,5 @@ object frmTexRandomizer: TfrmTexRandomizer
     Caption = 'Ustaw regu'#322'y losowania'
     TabOrder = 3
     OnClick = btnRulesClick
-    ExplicitLeft = 64
-    ExplicitTop = 144
-    ExplicitWidth = 75
   end
 end

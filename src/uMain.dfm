@@ -379,7 +379,8 @@ object Main: TMain
         'PL'
         'EN'
         'CZ'
-        'HU')
+        'HU'
+        'RU')
     end
     object pnlVersion: TPanel
       Left = 497
@@ -1063,7 +1064,7 @@ object Main: TMain
             Left = 0
             Top = 0
             Width = 876
-            Height = 378
+            Height = 361
             Align = alTop
             Anchors = [akLeft, akTop, akRight, akBottom]
             BevelOuter = bvNone
@@ -1073,7 +1074,7 @@ object Main: TMain
               Left = 3
               Top = 3
               Width = 230
-              Height = 371
+              Height = 354
               Margins.Bottom = 4
               Align = alLeft
               BevelOuter = bvNone
@@ -1098,7 +1099,7 @@ object Main: TMain
                 Left = 0
                 Top = 99
                 Width = 230
-                Height = 206
+                Height = 189
                 Hint = 'Kliknij dwukrotnie na li'#347'cie aby podmieni'#263' tekstur'#281'.'
                 Align = alClient
                 ParentShowHint = False
@@ -1111,7 +1112,7 @@ object Main: TMain
               object btnAddVehicle: TButton
                 AlignWithMargins = True
                 Left = 3
-                Top = 339
+                Top = 322
                 Width = 224
                 Height = 29
                 Action = actAddVehicle
@@ -1120,7 +1121,7 @@ object Main: TMain
               end
               object pnlMini: TPanel
                 Left = 0
-                Top = 305
+                Top = 288
                 Width = 230
                 Height = 31
                 Align = alBottom
@@ -1202,6 +1203,7 @@ object Main: TMain
                     'Wagony P'
                     'Wagony R'
                     'Wagony S'
+                    'Wagony T'
                     'Wagony U'
                     'Wagony V'
                     'Wagony W'
@@ -1238,7 +1240,7 @@ object Main: TMain
               Left = 239
               Top = 3
               Width = 634
-              Height = 372
+              Height = 355
               ActivePage = tsSCNTrains
               Align = alClient
               MultiLine = True
@@ -1250,7 +1252,7 @@ object Main: TMain
                   Left = 0
                   Top = 0
                   Width = 626
-                  Height = 341
+                  Height = 324
                   Align = alClient
                   BevelOuter = bvNone
                   ShowCaption = False
@@ -1259,7 +1261,7 @@ object Main: TMain
                     Left = 0
                     Top = 0
                     Width = 626
-                    Height = 290
+                    Height = 273
                     Margins.Bottom = 0
                     Align = alClient
                     BevelInner = bvNone
@@ -1273,7 +1275,7 @@ object Main: TMain
                   end
                   object btnAddToDepo: TButton
                     Left = 0
-                    Top = 312
+                    Top = 295
                     Width = 626
                     Height = 29
                     Margins.Top = 0
@@ -1285,7 +1287,7 @@ object Main: TMain
                   object pnlTrainsTop: TPanel
                     AlignWithMargins = True
                     Left = 3
-                    Top = 293
+                    Top = 276
                     Width = 620
                     Height = 16
                     Align = alBottom
@@ -1325,7 +1327,7 @@ object Main: TMain
                 ImageIndex = 1
                 object btnRemoveFromDepot: TButton
                   Left = 0
-                  Top = 312
+                  Top = 295
                   Width = 626
                   Height = 29
                   Margins.Top = 0
@@ -1338,7 +1340,7 @@ object Main: TMain
                   Left = 0
                   Top = 0
                   Width = 626
-                  Height = 312
+                  Height = 295
                   Margins.Top = 0
                   Margins.Bottom = 0
                   Align = alClient
@@ -2786,7 +2788,6 @@ object Main: TMain
                 Font.Style = [fsBold]
                 ParentFont = False
                 Layout = tlCenter
-                ExplicitTop = 330
                 ExplicitWidth = 118
               end
               object pnlSettingsSet: TPanel
@@ -2845,20 +2846,18 @@ object Main: TMain
                 AlignWithMargins = True
                 Left = 3
                 Top = 3
-                Width = 193
+                Width = 191
                 Height = 26
                 Align = alLeft
                 Caption = 'Lokalizacja wczytanych ustawie'#324':'
                 Layout = tlCenter
-                ExplicitLeft = 0
-                ExplicitTop = 0
-                ExplicitHeight = 41
+                ExplicitHeight = 16
               end
               object lbSettingsPath: TLabel
                 AlignWithMargins = True
-                Left = 202
+                Left = 200
                 Top = 3
-                Width = 663
+                Width = 665
                 Height = 26
                 Align = alClient
                 Font.Charset = DEFAULT_CHARSET
@@ -2870,8 +2869,6 @@ object Main: TMain
                 ParentShowHint = False
                 ShowHint = True
                 Layout = tlCenter
-                ExplicitLeft = 193
-                ExplicitTop = 0
                 ExplicitWidth = 4
                 ExplicitHeight = 16
               end
@@ -3292,7 +3289,7 @@ object Main: TMain
                   object lbHDR: TLabel
                     AlignWithMargins = True
                     Left = 3
-                    Top = 199
+                    Top = 231
                     Width = 194
                     Height = 16
                     Align = alTop
@@ -3304,7 +3301,7 @@ object Main: TMain
                   object Label38: TLabel
                     AlignWithMargins = True
                     Left = 3
-                    Top = 147
+                    Top = 179
                     Width = 194
                     Height = 16
                     Align = alTop
@@ -3313,10 +3310,29 @@ object Main: TMain
                     ExplicitLeft = 6
                     ExplicitTop = 392
                   end
+                  object lbRenderWarning: TLabel
+                    Left = 0
+                    Top = 52
+                    Width = 200
+                    Height = 32
+                    Align = alTop
+                    Alignment = taCenter
+                    AutoSize = False
+                    Caption = 'Ten render jako testowy mo'#380'e nie dzia'#322'a'#263' prawid'#322'owo!'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clYellow
+                    Font.Height = -13
+                    Font.Name = 'Tahoma'
+                    Font.Style = []
+                    ParentFont = False
+                    Visible = False
+                    WordWrap = True
+                    StyleElements = [seClient, seBorder]
+                  end
                   object chExtraEffects: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 297
+                    Top = 329
                     Width = 194
                     Height = 17
                     Align = alTop
@@ -3347,7 +3363,7 @@ object Main: TMain
                   object chChromaticAberration: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 251
+                    Top = 283
                     Width = 194
                     Height = 17
                     Align = alTop
@@ -3359,7 +3375,7 @@ object Main: TMain
                   object chMotionBlur: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 274
+                    Top = 306
                     Width = 194
                     Height = 17
                     Align = alTop
@@ -3371,7 +3387,7 @@ object Main: TMain
                   object chEnvmap: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 320
+                    Top = 352
                     Width = 194
                     Height = 17
                     Align = alTop
@@ -3383,7 +3399,7 @@ object Main: TMain
                   object chSkipPipeline: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 78
+                    Top = 110
                     Width = 194
                     Height = 17
                     Align = alTop
@@ -3394,7 +3410,7 @@ object Main: TMain
                   object chAngle: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 55
+                    Top = 87
                     Width = 194
                     Height = 17
                     Action = actANGLE
@@ -3404,7 +3420,7 @@ object Main: TMain
                   object cbHDR: TComboBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 221
+                    Top = 253
                     Width = 194
                     Height = 24
                     Align = alTop
@@ -3421,7 +3437,7 @@ object Main: TMain
                   object chUsevbo: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 343
+                    Top = 375
                     Width = 194
                     Height = 17
                     Align = alTop
@@ -3433,7 +3449,7 @@ object Main: TMain
                   object chVsync: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 101
+                    Top = 133
                     Width = 194
                     Height = 17
                     Align = alTop
@@ -3445,7 +3461,7 @@ object Main: TMain
                   object chSmoke: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 124
+                    Top = 156
                     Width = 194
                     Height = 17
                     Align = alTop
@@ -3457,7 +3473,7 @@ object Main: TMain
                   object cbSmokeFidelity: TComboBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 169
+                    Top = 201
                     Width = 194
                     Height = 24
                     Align = alTop
@@ -3475,7 +3491,7 @@ object Main: TMain
                   object chSkipRendering: TCheckBox
                     AlignWithMargins = True
                     Left = 3
-                    Top = 366
+                    Top = 398
                     Width = 194
                     Height = 17
                     Hint = 'Uruchamia symulator bez grafiki.'
@@ -3487,7 +3503,7 @@ object Main: TMain
                   end
                   object pnlDynamicLights: TPanel
                     Left = 0
-                    Top = 386
+                    Top = 418
                     Width = 200
                     Height = 41
                     Align = alTop
@@ -3781,7 +3797,8 @@ object Main: TMain
                       'Brak'
                       'x2'
                       'x4'
-                      'x8')
+                      'x8'
+                      'x16')
                   end
                   object cbResolution: TComboBox
                     AlignWithMargins = True

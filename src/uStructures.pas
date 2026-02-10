@@ -39,7 +39,7 @@ type
   TIncludeType = (itDefDisabled,itDefEnabled,itTerrain);
 
   TTyp = (tyELEKTROWOZ,tySPALINOWOZ,tyPAROWOZ,tySZYNOBUS,tyEZT,
-          tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyI, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyX, tyZ,
+          tyA, tyB, tyD, tyE, tyF, tyG, tyH, tyI, tyL, tyP, tyR, tyS, tyU, tyV, tyW, tyT, tyX, tyZ,
           tyROBOCZY,tyDREZYNA, tyTRAMWAJ,tySAMOCHOD,tyAUTOBUS,tyCIEZAROWKA,tyOSOBA,tyZWIERZE,
           tyPROTOTYP, tyINNE, tyUNKNOWN);
 
@@ -283,11 +283,12 @@ type
   TLoad = class
     Name    : string;
     Weight  : Integer;
+    Desc    : string;
   end;
 
   TSList = class(TStringList)
     public
-      constructor Create;// override;
+      constructor Create;
   end;
 
 const

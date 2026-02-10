@@ -62,7 +62,8 @@ type
 implementation
 
 uses SysUtils, uMain, uUtilities, Character, Math {$IFDEF DEBUG}{,System.Diagnostics}{$ENDIF}, uData,// uStart,
-    System.WideStrUtils, uSettingsAdv, uStart, strUtils, System.Diagnostics, uI18nCtx;
+    System.WideStrUtils, uSettingsAdv, uStart, strUtils, System.Diagnostics, uLanguages, uI18nCtx;
+
 
 {$IFDEF DEBUG}
 {procedure Measure;
@@ -81,13 +82,13 @@ class procedure TLexParser.LoadData;
 begin
   with TLexParser.Create do
   try
-    TfrmStart.GetInstance.UpdateLabel(Util.LabelStr(CAP_LOADING_DEPOT));
+    TfrmStart.GetInstance.UpdateLabel(Lang.LabelStr(TEXT_LOADING_DEPOT));
     LoadModels;
-    TfrmStart.GetInstance.UpdateLabel(Util.LabelStr(CAP_LOADING_PHYSICS));
+    TfrmStart.GetInstance.UpdateLabel(Lang.LabelStr(TEXT_LOADING_PHYSICS));
     LoadPhysics;
-    TfrmStart.GetInstance.UpdateLabel(Util.LabelStr(CAP_LOADING_SCN));
+    TfrmStart.GetInstance.UpdateLabel(Lang.LabelStr(TEXT_LOADING_SCN));
     LoadSceneries;
-    TfrmStart.GetInstance.UpdateLabel(Util.LabelStr(CAP_LOADING_WEIGHTS));
+    TfrmStart.GetInstance.UpdateLabel(Lang.LabelStr(TEXT_LOADING_WEIGHTS));
     LoadWeights;
   finally
     Free;
@@ -123,7 +124,7 @@ begin
     FindClose(SR);
   except
     on E: Exception do
-      Util.LogAdd('B³¹d wczytywania taboru. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd(Lang.LabelStr(TEXT_LOADMODELS_FAULT,[E.Message]));
   end;
 end;
 
@@ -144,7 +145,7 @@ begin
 
     FindClose(SR);
   except
-    Util.LogAdd('B³¹d wczytywania scenerii ' + SR.Name);
+    Util.LogAdd(Lang.LabelStr(TEXT_LOADSCENERY_FAULT,[SR.Name]));
   end;
 end;
 
@@ -218,7 +219,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd(Lang.LabelStr(TEXT_PARSETRAIN_FAULT,[E.Message]));
   end;
 end;
 
@@ -255,8 +256,7 @@ begin
     Vehicle.Texture := Data.Textures.First;
 
     if (not IsReplacableSkinNone) then
-      Util.LogAdd('# Braki dla pojazdu: ' + Vehicle.Name
-                  + ' tekstura: ' + Vehicle.ReplacableSkin + ' [' + Vehicle.TypeChk + ']');
+      Util.LogAdd(Lang.LabelStr(TEXT_VEHICLE_INVALID,[Vehicle.Name,Vehicle.ReplacableSkin,Vehicle.TypeChk]));
   end;
 end;
 
@@ -268,6 +268,11 @@ var
 begin
   LoadWeights := TSList.Create;
   try
+    Load      := TLoad.Create;
+    Load.Name := 'pantstate';
+    Load.Desc := 'uruchomiony';
+    Data.Loads.Add(Load);
+
     if FileExists(Util.DIR + 'data\load_weights.txt') then
     begin
       LoadWeights.LoadFromFile(Util.DIR + 'data\load_weights.txt');
@@ -282,6 +287,7 @@ begin
           Load        := TLoad.Create;
           LoadName    := GetToken;
           Load.Name   := Copy(LoadName,0,Pos(':',LoadName)-1);
+          Load.Desc   := Load.Name;
           Lexer.NextNoJunk;
           Load.Weight := StrToInt(Lexer.Token);
           Data.Loads.Add(Load);
@@ -290,7 +296,7 @@ begin
       end;
     end;
   except
-    Util.LogAdd('B³¹d wczytywania wag jednostek ³adunków.');
+    Util.LogAdd(Lang.LabelStr(TEXT_LOADWEIGHTS_FAULT));
     LoadWeights.Free;
   end;
 end;
@@ -323,7 +329,7 @@ begin
     Lexer.NextID(ptIdentifier);
 
     if not SameText('dynamic',Lexer.Token) then
-      Util.LogAdd('B³¹d sk³adniowy wpisu pojazdu ' + Result.Name + ', wyra¿enie ' + Lexer.Token);
+      Util.LogAdd(Lang.LabelStr(TEXT_VEHICLESYNTAXFAULT,[Result.Name,Lexer.Token]));
 
     Lexer.NextNoJunk;
     Result.Dir := GetToken;
@@ -379,20 +385,20 @@ begin
     FindTexture(Result);
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania wpisu pojazdu ' + Result.Name + ' . Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd(Lang.LabelStr(TEXT_VEHICLEPARSE_FAULT,[Result.Name, E.Message]));
   end;
 end;
 
 procedure TLexParser.StrToIntTry(const S:string; out Value:Integer);
 begin
   if not TryStrToInt(S,Value) then
-    Util.Log.Add('B³¹d podczas parsowania wyra¿enia ' + S + ' (str->int))');
+    Util.Log.Add(Lang.LabelStr(TEXT_PARSING_FAULT,[s, '(str->int)']));
 end;
 
 procedure TLexParser.StrToFloatTry(const S:string; out Value:Double);
 begin
   if not TryStrToFloat(S,Value) then
-    Util.Log.Add('B³¹d podczas parsowania wyra¿enia ' + S + ' (str->single))');
+    Util.Log.Add(Lang.LabelStr(TEXT_PARSING_FAULT,[s, '(str->single)']));
 end;
 
 function TLexParser.GetBrakeValue(const Settings:string;Pos:Integer):string;
@@ -482,10 +488,9 @@ begin
 
     if Vehicle.Coupler < 0 then
       Vehicle.Coupler := Abs(Vehicle.Coupler) + 128;
-
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania wpisu pojazdu ' + Vehicle.Name + ' . Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd(Lang.LabelStr(TEXT_VEHICLEPARSE_FAULT,[Vehicle.Name, E.Message]));
   end;
 end;
 
@@ -535,7 +540,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania sekcji config. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd(Lang.LabelStr(TEXT_PARSESECTIONFAULT,['config', E.Message]));
   end;
 end;
 
@@ -659,12 +664,11 @@ begin
     end;
 
     Lexer.NextNoSpace;
-
     if Lexer.Token <> 'endatmo' then
       Config.Overcast := StrToFloat(GetToken);
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania wpisu atmo. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd(Lang.LabelStr(TEXT_PARSESECTIONFAULT,['atmo', E.Message]));
   end;
 end;
 
@@ -876,8 +880,7 @@ begin
     except
       on E: Exception do
       begin
-        s := '# B³¹d parsowania ' + SCN.Path + ', linia: ' + IntToStr(Lexer.LineNumber) + ' Szczegó³y b³êdu: ' + E.Message;
-        Util.LogAdd(s);
+        Util.LogAdd(Lang.LabelStr(TEXT_PARSEFAULTDETAIL,[SCN.Path, IntToStr(Lexer.LineNumber),E.Message]));
       end;
     end;
   finally
@@ -924,7 +927,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.LogAdd('# B³¹d parsowania sk³adu. Szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd(Lang.LabelStr(TEXT_PARSETRAINSETFAULT,[E.Message]));
   end;
 end;
 
@@ -965,7 +968,7 @@ begin
       Tex.Models.Add(Model);
     end;
   except
-    Util.LogAdd('B³¹d parsowania textures.txt dla ' + Tex.Dir + '\' + Tex.Plik + ', linia: ' + IntToStr(Lexer.LineNumber));
+    Util.LogAdd(Lang.LabelStr(TEXT_PARSETEXMODELFAULT,[Tex.Dir,Tex.Plik,IntToStr(Lexer.LineNumber)]));
   end;
 end;
 
@@ -1095,7 +1098,7 @@ begin
     end;
   except
     on E: Exception do
-      Util.LogAdd('B³¹d parsowania ' + Path + ', szczegó³y b³êdu: ' + E.Message);
+      Util.LogAdd(Lang.LabelStr(TEXT_PARSETEXTURESFAULT,[Path,E.Message]));
   end;
 end;
 
@@ -1119,7 +1122,7 @@ begin
       Tex.Author    := Par[6];
       Tex.Photos    := Par[7];
     except
-      Util.LogAdd('B³¹d przetwarzania opisu tekstury: ' + Tex.Desc);
+      Util.LogAdd(Lang.LabelStr(TEXT_PARSE_TEXDESCFAULT,[Tex.Desc]));
     end;
   finally
     Par.Free;
@@ -1300,7 +1303,7 @@ begin
 
     Params.Free;
   except
-    Util.LogAdd('B³¹d parsowania ' + Physics.Dir + '\' + Physics.Name + '.fiz, linia: ' + IntToStr(Lexer.LineNumber));
+    Util.LogAdd(Lang.LabelStr(TEXT_PARSEPHYSICSFAULT,[Physics.Dir,Physics.Name,IntToStr(Lexer.LineNumber)]));
   end;
 end;
 

@@ -60,8 +60,8 @@ uses uUtilities, uLanguages;
 
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin
-  if Util.Lang <> 'pl' then
-    TLanguages.ChangeLanguage(Self,Util.Lang);
+  if Util.LangStr <> 'pl' then
+    TLang.ChangeLanguage(Self,Util.LangStr);
 
   lbVersion.Caption := Util.FileVersion;
 end;

@@ -14,7 +14,6 @@ object frmSearch: TfrmSearch
   Position = poScreenCenter
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object lbSearch: TLabel
     AlignWithMargins = True
@@ -133,22 +132,20 @@ object frmSearch: TfrmSearch
       Left = 162
       Top = 3
       Width = 56
-      Height = 15
+      Height = 13
       Align = alLeft
       Caption = 'Rewizja do:'
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object Label2: TLabel
       AlignWithMargins = True
       Left = 3
       Top = 3
       Width = 56
-      Height = 15
+      Height = 13
       Align = alLeft
       Caption = 'Rewizja od:'
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object dtRevEnd: TDateTimePicker
       Left = 221

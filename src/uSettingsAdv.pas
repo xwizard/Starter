@@ -104,7 +104,7 @@ begin
       Main.AddVehicle(0,nil,False,False);
     end;
   except
-    ShowMessage(Util.LabelStr(CAP_OPERATION_FAULT));
+    ShowMessage(Lang.LabelStr(TEXT_OPERATION_FAULT));
   end;
 end;
 
@@ -148,7 +148,7 @@ begin
       MMD.Free;
     end;
   except
-    ShowMessage(Util.LabelStr(CAP_OPERATION_FAULT));
+    ShowMessage(Lang.LabelStr(TEXT_OPERATION_FAULT));
   end;
 end;
 
@@ -159,9 +159,9 @@ end;
 
 procedure TfrmSettingsAdv.actRemoveAllTrainsExecute(Sender: TObject);
 begin
-  if Util.Ask(Util.LabelStr(CAP_REMOVE_ALL_VEHICLES)) then
+  if Util.Ask(Lang.LabelStr(TEXT_REMOVE_ALL_VEHICLES)) then
     if not Main.RemoveAllTrains then
-      ShowMessage(Util.LabelStr(CAP_OPERATION_FAULT));
+      ShowMessage(Lang.LabelStr(TEXT_OPERATION_FAULT));
 end;
 
 procedure TfrmSettingsAdv.actRemoveAllTrainsUpdate(Sender: TObject);
@@ -178,8 +178,8 @@ end;
 
 procedure TfrmSettingsAdv.FormCreate(Sender: TObject);
 begin
-  if Util.Lang <> 'pl' then
-    TLanguages.ChangeLanguage(Self,Util.Lang);
+  if Util.LangStr <> 'pl' then
+    TLang.ChangeLanguage(Self,Util.LangStr);
 end;
 
 procedure TfrmSettingsAdv.FormHide(Sender: TObject);
@@ -196,7 +196,7 @@ begin
    Result := SI.dwNumberOfProcessors;
   except
     Result := 0;
-    Util.Log.Add('Nieudane pobranie dostêpnej iloœci w¹tków komputera.');
+    Util.Log.Add(Lang.LabelStr(TEXT_NUMBEROFPROCESSORS));
   end;
 end;
 

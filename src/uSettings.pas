@@ -356,7 +356,7 @@ begin
     Par.Free;
   end;
 
-  TLanguages.ChangeIniLanguage('pl');
+  TLang.ChangeIniLanguage('pl');
 end;
 
 procedure TSettings.LoadPresets;
@@ -786,16 +786,18 @@ begin
     if (Main.cbGfxrenderer.ItemIndex = 0) and (Main.chSkipPipeline.Checked) then
       Main.cbGfxrenderer.ItemIndex := 1;
 
+    Main.cbGfxrenderer.Tag := Main.cbGfxrenderer.ItemIndex;
+
     if Main.cbBuffer.ItemIndex = -1 then Main.cbBuffer.ItemIndex := 3;
   except
     on E: Exception do
     begin
-      Token := Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['eu07.ini']) + #13#10;
+      Token := Lang.LabelStr(TEXT_LOAD_SETTINGS_FAULT,['eu07.ini']) + #13#10;
 
       if (i >= 0) and (i < Params.Count-1) then
-        Token := Token + Util.LabelStr(CAP_PARAMETER) + ': ' + Params[i].Name + #13#10
-                       + Util.LabelStr(CAP_INVALID_VALUE) + ': ' + Params[i].Value + #13#10;
-      Token := Token + Util.LabelStr(CAP_FAULT_DETAIL) + ':' + #13#10 + E.Message;
+        Token := Token + Lang.LabelStr(TEXT_PARAMETER) + ': ' + Params[i].Name + #13#10
+                       + Lang.LabelStr(TEXT_INVALID_VALUE) + ': ' + Params[i].Value + #13#10;
+      Token := Token + Lang.LabelStr(TEXT_FAULT_DETAIL) + ':' + #13#10 + E.Message;
 
       ShowMessage(Token);
       Util.Log.Add(Token);
@@ -929,11 +931,11 @@ begin
 
       if SameText(ParName,'lang') then
       begin
-        TLanguages.FillLangLabels;
+        TLang.ChangeLoads(ParValue);
 
-        Util.Lang := ParValue;
+        Util.LangStr := ParValue;
         if not ((FirstRun) and (ParValue = 'pl')) then
-          TLanguages.ChangeLanguage(Main,ParValue);
+          TLang.ChangeLanguage(Main,ParValue);
       end
       else if SameText(ParName,'AutoClosingApp') then
         Main.cbCloseApp.Checked := ParValue = 'yes'
@@ -998,10 +1000,10 @@ begin
   except
     on E: Exception do
     begin
-      ShowMessage(Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['starter\starter.ini']) + #13#10
-                                    + Util.LabelStr(CAP_FAULT_DETAIL) + #13#10 + E.Message);
-      Util.Log.Add(Format(Util.LabelStr(CAP_LOAD_SETTINGS_FAULT),['starter\starter.ini']) + #13#10
-                                    + Util.LabelStr(CAP_FAULT_DETAIL) + #13#10 + E.Message);
+      ShowMessage(Lang.LabelStr(TEXT_LOAD_SETTINGS_FAULT,['starter\starter.ini']) + #13#10
+                                    + Lang.LabelStr(TEXT_FAULT_DETAIL) + #13#10 + E.Message);
+      Util.Log.Add(Lang.LabelStr(TEXT_LOAD_SETTINGS_FAULT,['starter\starter.ini']) + #13#10
+                                    + Lang.LabelStr(TEXT_FAULT_DETAIL) + #13#10 + E.Message);
     end;
   end;
 end;
@@ -1461,7 +1463,7 @@ begin
       CopyFile(PChar(Util.Dir + 'starter\ACESFilm.glsl'),PChar(Util.Dir + 'shaders\tonemapping.glsl'),False);
   except
     on E: Exception do
-      ShowMessage(Util.LabelStr(CAP_ALGORITHM_FAULT) + ' ' + E.Message);
+      ShowMessage(Lang.LabelStr(TEXT_ALGORITHM_FAULT) + ' ' + E.Message);
   end;
 end;
 
@@ -1476,7 +1478,7 @@ begin
   if LastChange > 0 then
   begin
     if LastChange > SettingsAge then
-      if Util.Ask(Util.LabelStr(CAP_SET_CHANGED)) then
+      if Util.Ask(Lang.LabelStr(TEXT_SET_CHANGED)) then
         ReadSettings()
       else
         SettingsAge := LastChange;
