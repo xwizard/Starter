@@ -23,9 +23,40 @@ unit uSettingsAdv;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  System.Actions, Vcl.ActnList, Vcl.ComCtrls, Vcl.Samples.Spin;
+{$IFDEF FPC}
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  StdCtrls,
+  ExtCtrls,
+  ActnList,
+  ComCtrls,
+  Spin,
+  SysUtils,
+  Variants,
+  Classes
+{$ELSE}
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  System.Actions,
+  Vcl.ActnList,
+  Vcl.ComCtrls,
+  Vcl.Samples.Spin,
+  SysUtils,
+  Variants,
+  Classes
+{$ENDIF}
+  ;
 
 type
   TfrmSettingsAdv = class(TForm)
@@ -91,7 +122,7 @@ implementation
 
 uses uUtilities, uLanguages, uMain, uStructures;
 
-{$R *.dfm}
+{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
 
 procedure TfrmSettingsAdv.actAddVehiclesCategoryExecute(Sender: TObject);
 var
@@ -188,6 +219,7 @@ begin
 end;
 
 function GetNumberOfProcessors: Integer;
+{$IFDEF MSWINDOWS}
 var
   SI: TSystemInfo;
 begin
@@ -199,6 +231,11 @@ begin
     Util.Log.Add(Lang.LabelStr(TEXT_NUMBEROFPROCESSORS));
   end;
 end;
+{$ELSE}
+begin
+  Result := TThread.ProcessorCount;
+end;
+{$ENDIF}
 
 procedure TfrmSettingsAdv.FormShow(Sender: TObject);
 begin
@@ -223,7 +260,9 @@ begin
     meLog.Lines := Util.Log;
     meLog.Lines.EndUpdate;
 
+{$IFDEF MSWINDOWS}
     meLog.Perform(EM_LINESCROLL, 0, meLog.Lines.Count-1);
+{$ENDIF}
   end;
 end;
 

@@ -21,7 +21,12 @@ unit uSettings;
 
 interface
 
-uses CastaliaPasLex, CastaliaPasLexTypes, System.Generics.Collections, System.Generics.Defaults, Classes;
+uses
+  CastaliaPasLex,
+  CastaliaPasLexTypes,
+  Generics.Collections,
+  Generics.Defaults,
+  Classes;
 
 type
   TParam = class
@@ -92,8 +97,16 @@ type
 
 implementation
 
-uses uMain, uSettingsAdv, WinTypes, uLanguages, SysUtils, Vcl.Forms,
-     Dialogs, DateUtils, uUpdater, uUtilities, StdCtrls;
+uses uMain, uSettingsAdv, uLanguages, SysUtils,
+{$IFDEF FPC}
+     Forms, FileUtil,
+{$ELSE}
+     WinTypes, Vcl.Forms,
+{$ENDIF}
+     Dialogs, DateUtils, uUtilities, StdCtrls
+{$IFDEF MSWINDOWS}, uUpdater{$ENDIF};
+
+
 
 constructor TSettings.Create;
 begin
@@ -166,6 +179,13 @@ begin
     Result := 0;
 end;
 
+{$IFDEF FPC}
+function CompareFileAgesFPC(constref L, R: TFileAge): Integer;
+begin
+  Result := CompareFileAges(L, R);
+end;
+{$ENDIF}
+
 procedure TSettings.LoadEXE;
 var
   SR : TSearchRec;
@@ -190,13 +210,17 @@ begin
 
     Ilosc := FindNext(SR);
   end;
-  System.SysUtils.FindClose(SR);
+  SysUtils.FindClose(SR);
 
+{$IFDEF FPC}
+  ExeAges.Sort(TComparer<TFileAge>.Construct(@CompareFileAgesFPC));
+{$ELSE}
   ExeAges.Sort(TComparer<TFileAge>.Construct(
           function (const L, R: TFileAge): Integer
           begin
             result := CompareFileAges(L, R);
           end));
+{$ENDIF}
 
   for i := 0 to ExeAges.Count-1 do
     Main.cbEXE.Items.Add(ExeAges[i].Name);
@@ -209,6 +233,7 @@ begin
 end;
 
 procedure TSettings.ResolutionList;
+{$IFDEF MSWINDOWS}
 var
   DM: TDevMode;
   FindResolution: Bool;
@@ -241,6 +266,13 @@ begin
 
   Main.cbResolution.Items.EndUpdate;
 end;
+{$ELSE}
+begin
+  Main.cbResolution.Items.BeginUpdate;
+  Main.cbResolution.Items.Add(Format('%d x %d', [Screen.Width, Screen.Height]));
+  Main.cbResolution.Items.EndUpdate;
+end;
+{$ENDIF}
 
 function TSettings.LoadIni(const FileName:string; out aFileAge:TDateTime):TStringList;
 var
@@ -266,7 +298,7 @@ begin
   end;
 
   if (FileName <> 'eu07_input-keyboard.ini') and
-     (FileName <> 'starter\starter.ini') then
+     (FileName <> 'starter/starter.ini') then
   begin
     Main.lbSettingsPath.Caption := Path;
     Main.lbSettingsPath.Hint    := Path;
@@ -367,7 +399,7 @@ begin
   Main.cbPreset.Items.BeginUpdate;
   Main.cbPreset.Items.Clear;
 
-  C := FindFirst(Util.INIDir + 'starter\#*.ini',faDirectory,SR);
+  C := FindFirst(Util.INIDir + 'starter/#*.ini',faDirectory,SR);
   while (C = 0) do
   begin
     if (SR.Name <> '.') and (SR.Name <> '..') then
@@ -406,7 +438,7 @@ begin
         Main.actDefaultSettingsExecute(self);
     end
     else
-      Settings := LoadIni('starter\' + Path + '.ini');
+      Settings := LoadIni('starter/' + Path + '.ini');
 
     Lexer := TmwPasLex.Create;
 
@@ -871,7 +903,7 @@ begin
   if UTF8 then
     Settings.Add('utf8=yes');
 
-  SaveIni('starter\starter.ini',Settings);
+  SaveIni('starter/starter.ini',Settings);
   Settings.Free;
 end;
 
@@ -901,7 +933,8 @@ var
   VerStr : string;
   VerInt : Integer;
 begin
-  Main.cbGfxrenderer.Items.Delete(Main.cbGfxrenderer.Items.IndexOf('experimental'));
+  if Main.cbGfxrenderer.Items.IndexOf('experimental') >= 0 then
+    Main.cbGfxrenderer.Items.Delete(Main.cbGfxrenderer.Items.IndexOf('experimental'));
 
   if FileExists(Util.DIR + eu07exeSelected) then
   begin
@@ -922,7 +955,7 @@ begin
   try
     LoadEXE;
 
-    Settings := LoadIni('starter\starter.ini');
+    Settings := LoadIni('starter/starter.ini');
 
     for i := 0 to Settings.Count-1 do
     begin
@@ -932,7 +965,6 @@ begin
       if SameText(ParName,'lang') then
       begin
         TLang.ChangeLoads(ParValue);
-
         Util.LangStr := ParValue;
         if not ((FirstRun) and (ParValue = 'pl')) then
           TLang.ChangeLanguage(Main,ParValue);
@@ -985,10 +1017,12 @@ begin
 
     if Main.lbVersion.Tag < DaysBetween(Now,0)- Abs(StrToInt(Main.edUpdateInterval.Text))+1 then
     begin
+{$IFDEF MSWINDOWS}
       if StrToInt(Main.edUpdateInterval.Text) >= 0 then
         TfrmUpdater.UpdateProgram(False,False)
       else
         TfrmUpdater.UpdateProgram(True,False);
+{$ENDIF}
 
       Main.lbVersion.Tag := DaysBetween(Now,0);
     end;
@@ -1000,9 +1034,9 @@ begin
   except
     on E: Exception do
     begin
-      ShowMessage(Lang.LabelStr(TEXT_LOAD_SETTINGS_FAULT,['starter\starter.ini']) + #13#10
+      ShowMessage(Lang.LabelStr(TEXT_LOAD_SETTINGS_FAULT,['starter/starter.ini']) + #13#10
                                     + Lang.LabelStr(TEXT_FAULT_DETAIL) + #13#10 + E.Message);
-      Util.Log.Add(Lang.LabelStr(TEXT_LOAD_SETTINGS_FAULT,['starter\starter.ini']) + #13#10
+      Util.Log.Add(Lang.LabelStr(TEXT_LOAD_SETTINGS_FAULT,['starter/starter.ini']) + #13#10
                                     + Lang.LabelStr(TEXT_FAULT_DETAIL) + #13#10 + E.Message);
     end;
   end;
@@ -1457,10 +1491,17 @@ end;
 procedure TSettings.ChangeHDR(const Reinhard:Boolean=True);
 begin
   try
+{$IFDEF FPC}
     if Reinhard then
-      CopyFile(PChar(Util.Dir + 'starter\Reinhard.glsl'),PChar(Util.Dir + 'shaders\tonemapping.glsl'),False)
+      CopyFile(Util.Dir + 'starter/Reinhard.glsl', Util.Dir + 'shaders/tonemapping.glsl')
     else
-      CopyFile(PChar(Util.Dir + 'starter\ACESFilm.glsl'),PChar(Util.Dir + 'shaders\tonemapping.glsl'),False);
+      CopyFile(Util.Dir + 'starter/ACESFilm.glsl', Util.Dir + 'shaders/tonemapping.glsl');
+{$ELSE}
+    if Reinhard then
+      CopyFile(PChar(Util.Dir + 'starter/Reinhard.glsl'),PChar(Util.Dir + 'shaders/tonemapping.glsl'),False)
+    else
+      CopyFile(PChar(Util.Dir + 'starter/ACESFilm.glsl'),PChar(Util.Dir + 'shaders/tonemapping.glsl'),False);
+{$ENDIF}
   except
     on E: Exception do
       ShowMessage(Lang.LabelStr(TEXT_ALGORITHM_FAULT) + ' ' + E.Message);

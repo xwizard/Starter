@@ -23,9 +23,39 @@ unit uTexRandomizer;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uStructures, System.Generics.Collections,
-  Vcl.StdCtrls, Vcl.Samples.Spin, Vcl.ExtCtrls;
+{$IFDEF FPC}
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  StdCtrls,
+  Spin,
+  ExtCtrls,
+  SysUtils,
+  Variants,
+  Classes,
+  uStructures,
+  Generics.Collections
+{$ELSE}
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Samples.Spin,
+  Vcl.ExtCtrls,
+  SysUtils,
+  Variants,
+  Classes,
+  uStructures,
+  Generics.Collections
+{$ENDIF}
+  ;
 
 type
   TTexFilter = class
@@ -89,7 +119,7 @@ implementation
 
 uses uMain, uData, uUtilities, uRules, uLanguages;
 
-{$R *.dfm}
+{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
 
 { TexRandomizer }
 
@@ -100,10 +130,10 @@ var
   i : Integer;
 begin
   try
-    if FileExists(Util.DIR + 'starter\reguly.txt') then
+    if FileExists(Util.DIR + 'starter/reguly.txt') then
     begin
       TexStockFile := TStringList.Create;
-      TexStockFile.LoadFromFile(Util.DIR + 'starter\reguly.txt');
+      TexStockFile.LoadFromFile(Util.DIR + 'starter/reguly.txt');
 
       for i := 0 to TexStockFile.Count-1 do
       begin
@@ -254,10 +284,10 @@ begin
       end
       else
       begin
-        if Pos('road\',Vehicles[i].Dir) > 0 then
+        if Pos('road/',Vehicles[i].Dir) > 0 then
           TexFilter.Typ   := tySAMOCHOD
         else
-        if Pos('river\',Vehicles[i].Dir) > 0 then
+        if Pos('river/',Vehicles[i].Dir) > 0 then
           TexFilter.Typ   := tyINNE
         else
         if TexFilter.Drive then

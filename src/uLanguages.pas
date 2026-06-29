@@ -21,7 +21,13 @@ unit uLanguages;
 
 interface
 
-uses VCL.Forms;
+uses
+{$IFDEF FPC}
+  Forms
+{$ELSE}
+  VCL.Forms
+{$ENDIF}
+  ;
 
 type
   TLabels = (TEXT_CAR_NO,TEXT_AI_TRAIN,TEXT_KEY,TEXT_KEY_DESC,
@@ -92,8 +98,13 @@ var
 
 implementation
 
-uses System.SysUtils, uMain, System.Classes, StrUtils,
-     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst, ExtCtrls, typinfo, uUtilities, uData, uStructures, RTTI;
+uses SysUtils, uMain, Classes, StrUtils,
+{$IFDEF FPC}
+     StdCtrls, ActnList, ComCtrls, CheckLst,
+{$ELSE}
+     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst,
+{$ENDIF}
+     ExtCtrls, typinfo, uUtilities, uData, uStructures, RTTI;
 
 { TLanguages }
 
@@ -102,7 +113,11 @@ var
   i : Integer;
 begin
   for i := 0 to High(LabelsArray) do
+{$IFDEF FPC}
+    LabelsArray[i,0] := GetEnumName(TypeInfo(TLabels), i);
+{$ELSE}
     LabelsArray[i,0] := TRttiEnumerationType.GetName<TLabels>(TLabels(i));
+{$ENDIF}
 end;
 
 procedure TLang.StringsLoad;
@@ -203,7 +218,7 @@ begin
   LabelsArray[Ord(TEXT_SAVERULE),1]            := 'Zapisaæ ustalone regu³y?';
   LabelsArray[Ord(TEXT_NUMBEROFPROCESSORS),1]  := 'Nieudane pobranie dostêpnej iloœci w¹tków komputera.';
 
-  LabelsArray[Ord(TEXT_LOADRULESFAULT),1]      := 'B³¹d wczytywania regu³ (starter\reguly.txt). Szczegó³y b³êdu: %s';
+  LabelsArray[Ord(TEXT_LOADRULESFAULT),1]      := 'B³¹d wczytywania regu³ (starter/reguly.txt). Szczegó³y b³êdu: %s';
   LabelsArray[Ord(TEXT_FINDSIMILARTEXFAULT),1] := 'B³¹d wyszukiwania tekstur. Szczegó³y b³êdu: %s';
   LabelsArray[Ord(TEXT_MULTIPLEASSIGNFAULT),1] := 'B³¹d edycji pojazdu. Szczegó³y b³êdu: %s';
 
@@ -230,10 +245,10 @@ begin
   LabelsArray[Ord(TEXT_PARSESECTIONFAULT),1]   := '# B³¹d parsowania sekcji %S. Szczegó³y b³êdu: %s';
   LabelsArray[Ord(TEXT_PARSEFAULTDETAIL),1]    := '# B³¹d parsowania %s, linia: %s Szczegó³y b³êdu: %s';
   LabelsArray[Ord(TEXT_PARSETRAINSETFAULT),1]  := '# B³¹d parsowania sk³adu. Szczegó³y b³êdu: %s';
-  LabelsArray[Ord(TEXT_PARSETEXMODELFAULT),1]  := 'B³¹d parsowania textures.txt dla %s\%s, linia: %s';
+  LabelsArray[Ord(TEXT_PARSETEXMODELFAULT),1]  := 'B³¹d parsowania textures.txt dla %s/%s, linia: %s';
   LabelsArray[Ord(TEXT_PARSETEXTURESFAULT),1]  := 'B³¹d parsowania %s, szczegó³y b³êdu: %s';
   LabelsArray[Ord(TEXT_PARSE_TEXDESCFAULT),1]  := 'B³¹d przetwarzania opisu tekstury: %s';
-  LabelsArray[Ord(TEXT_PARSEPHYSICSFAULT),1]   := 'B³¹d parsowania %s\%s.fiz, linia: %s';
+  LabelsArray[Ord(TEXT_PARSEPHYSICSFAULT),1]   := 'B³¹d parsowania %s/%s.fiz, linia: %s';
 end;
 
 function TLang.LabelStr(const ID:TLabels):string;
@@ -253,10 +268,10 @@ var
   s : string;
   Load : TLoad;
 begin
-  if FileExists(Util.DIR + 'starter\lang-' + LangStr + '.txt') then
+  if FileExists(Util.DIR + 'starter/lang-' + LangStr + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt',TEncoding.UTF8);
+    LangFile.LoadFromFile(Util.DIR + 'starter/lang-' + LangStr + '.txt',TEncoding.UTF8);
     i := 0;
     while (Pos('<loads>',LangFile[i]) = 0) and (i < LangFile.Count-1) do
         Inc(i);
@@ -296,10 +311,10 @@ var
   i, y : Integer;
   s : string;
 begin
-  if FileExists(Util.DIR + 'starter\lang-' + LangStr + '.txt') then
+  if FileExists(Util.DIR + 'starter/lang-' + LangStr + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt',TEncoding.UTF8);
+    LangFile.LoadFromFile(Util.DIR + 'starter/lang-' + LangStr + '.txt',TEncoding.UTF8);
 
     i := 0;
     while (Pos('<labels>',LangFile[i]) = 0) and (i < LangFile.Count-1) do
@@ -337,10 +352,10 @@ begin
   ChangeLabels(LangStr);
   ChangeLoads(LangStr);
 
-  if FileExists(Util.DIR + 'starter\lang-' + LangStr + '.txt') then
+  if FileExists(Util.DIR + 'starter/lang-' + LangStr + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt',TEncoding.UTF8);
+    LangFile.LoadFromFile(Util.DIR + 'starter/lang-' + LangStr + '.txt',TEncoding.UTF8);
 
     i := 0;
     while (Pos('[' + Form.Name,LangFile[i]) = 0) and (i < LangFile.Count-1) do
@@ -404,10 +419,10 @@ var
   Prop : string;
   i, y : Integer;
 begin
-  if FileExists(Util.DIR + 'starter\lang-' + LangStr + '.txt') then
+  if FileExists(Util.DIR + 'starter/lang-' + LangStr + '.txt') then
   begin
     LangFile := TStringList.Create;
-    LangFile.LoadFromFile(Util.DIR + 'starter\lang-' + LangStr + '.txt',TEncoding.UTF8);
+    LangFile.LoadFromFile(Util.DIR + 'starter/lang-' + LangStr + '.txt',TEncoding.UTF8);
 
     i := 0;
     while (Pos('<' + 'eu07_input-keyboard.ini',LangFile[i]) = 0) and (i < LangFile.Count-1) do
@@ -442,11 +457,11 @@ var
 begin
   Result := '';
 
-  Count := FindFirst(Util.DIR + '\starter\lang-*.txt',faDirectory,SR);
+  Count := FindFirst(Util.DIR + '/starter/lang-*.txt',faDirectory,SR);
   while (Count = 0) do
   begin
-    if FileExists(Util.DIR + '\starter\' + SR.Name) then
-      Result := Result + '|' + Util.DIR + '\starter\' + SR.Name;
+    if FileExists(Util.DIR + '/starter/' + SR.Name) then
+      Result := Result + '|' + Util.DIR + '/starter/' + SR.Name;
     Count := FindNext(SR);
   end;
 end;
@@ -513,7 +528,7 @@ begin
     end;
   end;
 
-  sl.SaveToFile(DIR + '\starter\' + Lang + '.txt');
+  sl.SaveToFile(DIR + '/starter/' + Lang + '.txt');
 end;}
 
 end.

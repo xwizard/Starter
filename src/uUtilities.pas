@@ -72,23 +72,38 @@ function OmitAccents(const aStr: String): String;
 function ContainsOmitAccents(const S1,S2:string):Boolean;
 function SameTextOmitAccents(const S1,S2:string):Boolean;
 function RandomBoolean:Boolean;
+function EnsureUTF8(const S: string): string;
+function ReadFileRaw(const FileName: string): string;
 
 var
   Util  : TUtil;
 
 implementation
 
-uses ShellApi, Vcl.Forms, Windows, SysUtils, Dialogs, JPEG, uMain,
-    uData, StrUtils, uSettingsAdv, StdCtrls, Controls, uLanguages{, RTTI};
+uses SysUtils, Dialogs, uMain,
+    uData, StrUtils, uSettingsAdv, StdCtrls, Controls, uLanguages
+{$IFDEF FPC}
+    , Forms, LCLIntf, LCLType, process, LazUTF8, LConvEncoding
+{$ELSE}
+    , Vcl.Forms, JPEG
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+    , Windows, ShellApi
+{$ENDIF}
+    {, RTTI};
 
 function INIPath:string;
 begin
+{$IFDEF MSWINDOWS}
   Result := SysUtils.GetEnvironmentVariable('APPDATA');
 
   if Result <> '' then
-    Result := IncludeTrailingPathDelimiter(Result) + 'MaSzyna\'
+    Result := IncludeTrailingPathDelimiter(Result) + 'MaSzyna/'
   else
     Result := Util.Dir;
+{$ELSE}
+  Result := IncludeTrailingPathDelimiter(GetAppConfigDir(False)) + 'MaSzyna' + PathDelim;
+{$ENDIF}
 end;
 
 function Clamp(const Value, Min, Max:Integer):Integer;
@@ -103,17 +118,25 @@ end;
 
 procedure OpenDir(const Path:string);
 begin
+{$IFDEF MSWINDOWS}
   ShellExecute(Application.Handle,
     PChar('explore'),
     PChar(Path),
     nil,
     nil,
     SW_SHOWNORMAL);
+{$ELSE}
+  OpenDocument(Path);
+{$ENDIF}
 end;
 
 procedure OpenURL(const URL:string);
 begin
+{$IFDEF MSWINDOWS}
   ShellExecute(Application.Handle,'open',PChar(URL),nil,nil, SW_SHOWNORMAL);
+{$ELSE}
+  LCLIntf.OpenURL(URL);
+{$ENDIF}
 end;
 
 function IsParameter(const Name:string):Boolean;
@@ -130,7 +153,11 @@ end;
 procedure TUtil.OpenFile(const Path:string);
 begin
   if FileExists(Util.DIR + Path) then
+{$IFDEF MSWINDOWS}
     ShellExecute(Application.Handle,'open',PChar(Util.DIR + Path),nil,nil, SW_SHOWNORMAL)
+{$ELSE}
+    OpenDocument(Util.DIR + Path)
+{$ENDIF}
   else
     ShowMessage(Lang.LabelStr(TEXT_FILE_NOT_FOUND,[Path]));
 end;
@@ -140,15 +167,15 @@ begin
   try
     Result := '';
 
-    if FileExists(DIR + 'textures\mini\' + Model.MiniD + '.bmp') then
-      Result := DIR + 'textures\mini\' + Model.MiniD + '.bmp'
+    if FileExists(DIR + 'textures/mini/' + Model.MiniD + '.bmp') then
+      Result := DIR + 'textures/mini/' + Model.MiniD + '.bmp'
     else
-      if FileExists(DIR + 'textures\mini\' + Model.Mini + '.bmp') then
-        Result := DIR + 'textures\mini\' + Model.Mini + '.bmp';
+      if FileExists(DIR + 'textures/mini/' + Model.Mini + '.bmp') then
+        Result := DIR + 'textures/mini/' + Model.Mini + '.bmp';
 
     if Result.IsEmpty then
-      if FileExists(DIR + 'textures\mini\other.bmp') then
-        Result := DIR + 'textures\mini\other.bmp';
+      if FileExists(DIR + 'textures/mini/other.bmp') then
+        Result := DIR + 'textures/mini/other.bmp';
   except
     LogAdd(Lang.LabelStr(TEXT_LOAD_MINI_FAULT,[Model.Model]));
   end;
@@ -167,11 +194,17 @@ end;
 
 function TUtil.Ask(const Text:string):Boolean;
 begin
+{$IFDEF FPC}
+  with CreateMessageDialog(Text, mtCustom, [mbYes, mbNo]) do
+{$ELSE}
   with CreateMessageDialog(Text, mtCustom, [mbYes, mbNo], mbNo) do
+{$ENDIF}
     begin
       try
-        TButton(FindComponent('Yes')).Caption:= Lang.LabelStr(TEXT_YES);
-        TButton(FindComponent('No')).Caption:= Lang.LabelStr(TEXT_NO);
+        if FindComponent('Yes') <> nil then
+          TButton(FindComponent('Yes')).Caption:= Lang.LabelStr(TEXT_YES);
+        if FindComponent('No') <> nil then
+          TButton(FindComponent('No')).Caption:= Lang.LabelStr(TEXT_NO);
         ShowModal;
       finally
         Result := ModalResult = mrYes;
@@ -229,14 +262,14 @@ var
   MyFile: THandle;
 begin
   try
-    if not FileExists(Util.Dir + 'dynamic\textures.ini') then
+    if not FileExists(Util.Dir + 'dynamic/textures.ini') then
     begin
-      MyFile := FileCreate(Util.Dir + 'dynamic\textures.ini');
+      MyFile := FileCreate(Util.Dir + 'dynamic/textures.ini');
       FileClose(MyFile);
-      Util.Log.Add('Utworzono plik dynamic\textures.ini');
+      Util.Log.Add('Utworzono plik dynamic/textures.ini');
     end;
   except
-    Util.Log.Add(Lang.LabelStr(TEXT_CREATE_FILE_FAULT,['dynamic\textures.ini']));
+    Util.Log.Add(Lang.LabelStr(TEXT_CREATE_FILE_FAULT,['dynamic/textures.ini']));
   end;
 end;
 
@@ -246,18 +279,18 @@ var
   FoundFiles : Integer;
   FilesList : TStringList;
   JPG : TJPEGImage;
-  BMP: Vcl.Graphics.TBitmap;
+  BMP: TBitmap;
 begin
   JPG := TJPEGImage.Create;
   FilesList := TStringList.Create;
-  Bmp := Vcl.Graphics.TBitmap.Create;
+  Bmp := TBitmap.Create;
   try
     try
-      if FileExists(Util.DIR + 'textures\logo\' + LogoPath + '.jpg') then
-        JPG.LoadFromFile(Util.DIR + 'textures\logo\' + LogoPath + '.jpg')
+      if FileExists(Util.DIR + 'textures/logo/' + LogoPath + '.jpg') then
+        JPG.LoadFromFile(Util.DIR + 'textures/logo/' + LogoPath + '.jpg')
       else
       begin
-        FoundFiles := FindFirst(Util.DIR + 'textures\logo\logo*.jpg',faAnyFile,SR);
+        FoundFiles := FindFirst(Util.DIR + 'textures/logo/logo*.jpg',faAnyFile,SR);
         while (FoundFiles = 0) do
         begin
           if (SR.Name <> '.') and (SR.Name <> '..') then
@@ -267,12 +300,12 @@ begin
         end;
         FindClose(SR);
 
-        JPG.LoadFromFile(Util.DIR + 'textures\logo\' + FilesList[Random(FilesList.Count)]);
+        JPG.LoadFromFile(Util.DIR + 'textures/logo/' + FilesList[Random(FilesList.Count)]);
       end;
 
       Bmp.PixelFormat := pf32bit;
       Bmp.Assign(JPG);
-      Bmp.SaveToFile(Util.DIR + 'textures\logo.bmp');
+      Bmp.SaveToFile(Util.DIR + 'textures/logo.bmp');
     except
       on E: Exception do
         Util.Log.Add(Lang.LabelStr(TEXT_LOGO_FAULT,[E.Message]));
@@ -287,7 +320,11 @@ end;
 procedure RunSimulator(const RunInfo:TRunInfo);
 var
   Parameters : string;
+{$IFDEF MSWINDOWS}
   SEI : TShellExecuteInfo;
+{$ELSE}
+  Proc : TProcess;
+{$ENDIF}
 begin
   if RunInfo.Logo.Length > 0 then
     Util.PrepareLoadingScreen(RunInfo.Logo)
@@ -297,6 +334,7 @@ begin
   try
     Parameters := '-s ' + '$' + RunInfo.SceneryName + '.scn';
     Parameters := Parameters + ' -v ' + RunInfo.Vehicle;
+{$IFDEF MSWINDOWS}
     ZeroMemory(@SEI, SizeOf(SEI));
     SEI.cbSize := SizeOf(SEI);
     SEI.lpFile := PChar(RunInfo.EXE);
@@ -304,6 +342,20 @@ begin
     SEI.lpDirectory := PChar( ExtractFileDir(RunInfo.EXE));
     SEI.nShow := SW_SHOWNORMAL;
     ShellExecuteEx(@SEI);
+{$ELSE}
+    Proc := TProcess.Create(nil);
+    try
+      Proc.Executable := RunInfo.EXE;
+      Proc.Parameters.Add('-s');
+      Proc.Parameters.Add('$' + RunInfo.SceneryName + '.scn');
+      Proc.Parameters.Add('-v');
+      Proc.Parameters.Add(RunInfo.Vehicle);
+      Proc.CurrentDirectory := ExtractFileDir(RunInfo.EXE);
+      Proc.Execute;
+    finally
+      Proc.Free;
+    end;
+{$ENDIF}
   except
     on E: Exception do ShowMessage(E.Message);
   end;
@@ -358,14 +410,48 @@ begin
   Result := i mod 2 = 0;
 end;
 
+function ReadFileRaw(const FileName: string): string;
+var
+  FS: TFileStream;
+begin
+  Result := '';
+  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  try
+    if FS.Size > 0 then
+    begin
+      SetLength(Result, FS.Size);
+      FS.ReadBuffer(Result[1], FS.Size);
+    end;
+  finally
+    FS.Free;
+  end;
+end;
+
+function EnsureUTF8(const S: string): string;
+begin
+{$IFDEF FPC}
+  // MaSzyna data files are CP1250; the LCL/Cocoa text controls require valid
+  // UTF-8. Leave already-valid UTF-8 untouched, otherwise transcode from CP1250.
+  if (S = '') or (FindInvalidUTF8Codepoint(PChar(S), Length(S)) < 0) then
+    Result := S
+  else
+    Result := CP1250ToUTF8(S);
+{$ELSE}
+  Result := S;
+{$ENDIF}
+end;
+
 { TUtil }
 
 constructor TUtil.Create;
 var
   FileDate : TDateTime;
 begin
-  DIR := ExtractFilePath(ParamStr(0));
+{$IFDEF MSWINDOWS}
   DIR := 'C:\MaSzyna\';
+{$ELSE}
+  DIR := IncludeTrailingPathDelimiter(GetCurrentDir);
+{$ENDIF}
   INIDir := INIPath;
   Log := TStringList.Create;
 
@@ -381,7 +467,7 @@ begin
   FileDateStr := FormatDateTime(' dd.mm.yyyy',FileDate);
 end;
 
-procedure FlipBitmap(Bitmap: Vcl.Graphics.TBitmap; const Flip: Boolean);
+procedure FlipBitmap(Bitmap: TBitmap; const Flip: Boolean);
 var
   Width, Height : Integer;
   SrcRect, DstRect: TRect;
@@ -406,12 +492,15 @@ begin
 end;
 
 function TUtil.GetFileVersion(const FileName: string;StrFormat:string='%d.%d.%d'): string;
+{$IFDEF MSWINDOWS}
 var
   iBufferSize, iDummy: DWORD;
   pBuffer, pFileInfo: Pointer;
   iVer: array[1..3] of word;
+{$ENDIF}
 begin
   Result := '';
+{$IFDEF MSWINDOWS}
 
   iBufferSize := GetFileVersionInfoSize(PChar(FileName), iDummy);
   if (iBufferSize > 0) then
@@ -419,7 +508,7 @@ begin
     Getmem(pBuffer, iBufferSize);
     try
       GetFileVersionInfo(PChar(FileName), 0, iBufferSize, pBuffer);
-      VerQueryValue(pBuffer, '\', pFileInfo, iDummy);
+      VerQueryValue(pBuffer, '/', pFileInfo, iDummy);
 
       iVer[1] := HiWord(PVSFixedFileInfo(pFileInfo)^.dwFileVersionMS);
       iVer[2] := LoWord(PVSFixedFileInfo(pFileInfo)^.dwFileVersionMS);
@@ -429,6 +518,7 @@ begin
     end;
     Result := Format(StrFormat, [iVer[1], iVer[2], iVer[3]]);
   end;
+{$ENDIF}
 end;
 
 procedure TUtil.LogAdd(const S:string;const ShowInfo:Boolean=False);

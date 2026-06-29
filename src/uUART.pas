@@ -23,9 +23,37 @@ unit uUART;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids,
-  Vcl.ValEdit;
+{$IFDEF FPC}
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  StdCtrls,
+  ExtCtrls,
+  Grids,
+  ValEdit,
+  SysUtils,
+  Variants,
+  Classes
+{$ELSE}
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Grids,
+  Vcl.ValEdit,
+  SysUtils,
+  Variants,
+  Classes
+{$ENDIF}
+  ;
 
 type
   TfrmUART = class(TForm)
@@ -60,7 +88,7 @@ implementation
 
 uses uMain;
 
-{$R *.dfm}
+{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
 
 function TfrmUART.BoolToStr(const Value:Boolean):string;
 begin

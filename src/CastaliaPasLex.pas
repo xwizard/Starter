@@ -92,7 +92,7 @@ type
 
 implementation
 
-uses Windows;
+{$IFNDEF FPC}uses Windows;{$ENDIF}
 
 procedure MakeIdentTable;
 var

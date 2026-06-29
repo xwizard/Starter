@@ -3,11 +3,19 @@ unit uI18n;
 interface
 
 uses
+{$IFDEF FPC}
+  SysUtils,
+  Classes,
+  Generics.Collections,
+  fpjson,
+  jsonparser;
+{$ELSE}
   System.SysUtils,
   System.Classes,
   System.Generics.Collections,
   System.JSON,
   System.IOUtils;
+{$ENDIF}
 
 type
   TI18n = class
@@ -54,6 +62,39 @@ begin
     Result := 'en';
 end;
 
+{$IFDEF FPC}
+procedure TI18n.LoadJsonObject(const Prefix: string; Obj: TJSONObject);
+var
+  i: Integer;
+  Key, FullKey: string;
+  V: TJSONData;
+begin
+  for i := 0 to Obj.Count - 1 do
+  begin
+    Key := Obj.Names[i];
+    V := Obj.Items[i];
+
+    if Prefix = '' then
+      FullKey := Key
+    else
+      FullKey := Prefix + '.' + Key;
+
+    case V.JSONType of
+      jtString:
+        FMap.AddOrSetValue(FullKey, V.AsString);
+      jtObject:
+        LoadJsonObject(FullKey, TJSONObject(V));
+      jtNumber:
+        FMap.AddOrSetValue(FullKey, V.AsString);
+      jtBoolean:
+        if V.AsBoolean then
+          FMap.AddOrSetValue(FullKey, 'true')
+        else
+          FMap.AddOrSetValue(FullKey, 'false');
+    end;
+  end;
+end;
+{$ELSE}
 procedure TI18n.LoadJsonObject(const Prefix: string; Obj: TJSONObject);
 var
   Pair: TJSONPair;
@@ -95,7 +136,39 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
+{$IFDEF FPC}
+function TI18n.LoadJsonFile(const FileName: string): Boolean;
+var
+  S: string;
+  Root: TJSONData;
+  SL: TStringList;
+begin
+  Result := False;
+  if not FileExists(FileName) then
+    Exit;
+
+  SL := TStringList.Create;
+  try
+    SL.LoadFromFile(FileName);
+    S := SL.Text;
+  finally
+    SL.Free;
+  end;
+
+  Root := GetJSON(S);
+  try
+    if Root is TJSONObject then
+    begin
+      LoadJsonObject('', TJSONObject(Root));
+      Result := True;
+    end;
+  finally
+    Root.Free;
+  end;
+end;
+{$ELSE}
 function TI18n.LoadJsonFile(const FileName: string): Boolean;
 var
   S: string;
@@ -117,6 +190,7 @@ begin
     Root.Free;
   end;
 end;
+{$ENDIF}
 
 function TI18n.Load(const BaseDir, SceneryId, Lang: string; const FallbackLang: string): Boolean;
 var
@@ -131,8 +205,8 @@ begin
   FB := NormalizeLang(FallbackLang);
   FLang := L;
 
-  FileLang := IncludeTrailingPathDelimiter(BaseDir) + 'i18n\' + SceneryId + '_' + L + '.json';
-  FileFallback := IncludeTrailingPathDelimiter(BaseDir) + 'i18n\' + SceneryId + '_' + FB + '.json';
+  FileLang := IncludeTrailingPathDelimiter(BaseDir) + 'i18n' + PathDelim + SceneryId + '_' + L + '.json';
+  FileFallback := IncludeTrailingPathDelimiter(BaseDir) + 'i18n' + PathDelim + SceneryId + '_' + FB + '.json';
 
   if (FB <> '') and LoadJsonFile(FileFallback) then
     Result := True;
@@ -154,4 +228,3 @@ begin
 end;
 
 end.
-

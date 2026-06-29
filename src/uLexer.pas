@@ -28,8 +28,10 @@ type
   TLexer = class
   public
     Lexer:TmwPasLex;
+    FSource:string;
     constructor Create;
     destructor Destroy; override;
+    procedure SetSource(const S:string);
   protected
     function GetToken: string; overload;
     function GetToken(const Params: TStringList): string; overload;
@@ -53,6 +55,14 @@ end;
 destructor TLexer.Destroy;
 begin
   Lexer.Free;
+end;
+
+procedure TLexer.SetSource(const S:string);
+begin
+  // Keep the buffer alive in a field (Lexer.Origin holds a raw PChar into it)
+  // and ensure UTF-8 so CP1250 game data renders correctly under the LCL.
+  FSource := EnsureUTF8(S);
+  Lexer.Origin := PChar(FSource);
 end;
 
 function TLexer.GetToken:string;

@@ -23,9 +23,42 @@ unit uTextureBase;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Grids, Vcl.ExtCtrls,
-  Vcl.StdCtrls, uStructures, Vcl.Menus;
+{$IFDEF FPC}
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  ComCtrls,
+  DateTimePicker,
+  Grids,
+  ExtCtrls,
+  StdCtrls,
+  Menus,
+  SysUtils,
+  Variants,
+  Classes,
+  uStructures
+{$ELSE}
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ComCtrls,
+  Vcl.Grids,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  Vcl.Menus,
+  SysUtils,
+  Variants,
+  Classes,
+  uStructures
+{$ENDIF}
+  ;
 
 type
   TfrmTextureBase = class(TForm)
@@ -104,7 +137,7 @@ implementation
 
 uses uMain, uLanguages, Clipbrd, uUtilities, uData;
 
-{$R *.dfm}
+{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
 
 procedure TfrmTextureBase.cbOperatorClick(Sender: TObject);
 begin
@@ -193,7 +226,11 @@ begin
     if (cbRevStart.Checked) or (cbRevEnd.Checked) then
       if RevStr.Length = 10 then
       begin
+{$IFDEF FPC}
+        fs := DefaultFormatSettings;
+{$ELSE}
         fs := TFormatSettings.Create;
+{$ENDIF}
         fs.DateSeparator := '.';
         fs.ShortDateFormat := 'dd.MM.yyyy';
         RevStr := StringReplace(RevStr,'xx','01',[rfReplaceAll]);
@@ -270,7 +307,7 @@ end;
 
 procedure TfrmTextureBase.miOpenDirClick(Sender: TObject);
 begin
-  OpenDir(Util.DIR + 'dynamic\' + (sgModels.Cells[2,sgModels.Row]));
+  OpenDir(Util.DIR + 'dynamic/' + (sgModels.Cells[2,sgModels.Row]));
 end;
 
 procedure TfrmTextureBase.pmMenuPopup(Sender: TObject);
@@ -309,9 +346,9 @@ begin
 
     B := TBitmap.Create;
     if sgDepo.Cells[2,ARow].Length > 0 then
-      B.LoadFromFile(Util.DIR + '\textures\mini\' + sgDepo.Cells[2,ARow] + '.bmp')
+      B.LoadFromFile(Util.DIR + '/textures/mini/' + sgDepo.Cells[2,ARow] + '.bmp')
     else
-      B.LoadFromFile(Util.DIR + '\textures\mini\other.bmp');
+      B.LoadFromFile(Util.DIR + '/textures/mini/other.bmp');
 
     aCanvas.Draw(Rect.Left, Rect.Top, B);
   end;
@@ -323,7 +360,11 @@ begin
     sgDepo.Canvas.Font.Color := clYellow;
     RectForText := Rect;
     InflateRect(RectForText, -6, -8);
+{$IFDEF FPC}
+    sgDepo.Canvas.TextRect(RectForText, RectForText.Left, RectForText.Top, S);
+{$ELSE}
     sgDepo.Canvas.TextRect(RectForText,S);
+{$ENDIF}
   end;
 end;
 
@@ -400,10 +441,10 @@ begin
           sgDepo.Cells[0,sgDepo.RowCount-1] := IntToStr(sgDepo.RowCount-1) + '.';
           sgDepo.Cells[1,sgDepo.RowCount-1] := Data.Textures[i].Plik;
 
-          if FileExists(Util.DIR + '\textures\mini\' + Data.Textures[i].Models[y].MiniD + '.bmp') then
+          if FileExists(Util.DIR + '/textures/mini/' + Data.Textures[i].Models[y].MiniD + '.bmp') then
             sgDepo.Cells[2,sgDepo.RowCount-1] := Data.Textures[i].Models[y].MiniD
           else
-            if FileExists(Util.DIR + '\textures\mini\' + Data.Textures[i].Models[y].Mini + '.bmp') then
+            if FileExists(Util.DIR + '/textures/mini/' + Data.Textures[i].Models[y].Mini + '.bmp') then
               sgDepo.Cells[2,sgDepo.RowCount-1] := Data.Textures[i].Models[y].Mini;
 
           sgDepo.Cells[4,sgDepo.RowCount-1] := Data.Textures[i].Models[y].Model;

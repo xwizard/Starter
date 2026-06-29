@@ -23,9 +23,40 @@ unit uSearch;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, uStructures, Vcl.ExtCtrls,
-  Vcl.CheckLst, Vcl.ComCtrls;
+{$IFDEF FPC}
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  StdCtrls,
+  ExtCtrls,
+  CheckLst,
+  ComCtrls,
+  DateTimePicker,
+  SysUtils,
+  Variants,
+  Classes,
+  uStructures
+{$ELSE}
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.CheckLst,
+  Vcl.ComCtrls,
+  SysUtils,
+  Variants,
+  Classes,
+  uStructures
+{$ENDIF}
+  ;
 
 type
   TfrmSearch = class(TForm)
@@ -61,7 +92,7 @@ implementation
 
 uses uMain, uLanguages, uData, uUtilities;
 
-{$R *.dfm}
+{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
 
 procedure TfrmSearch.cbSearchTypeChange(Sender: TObject);
 begin
@@ -91,7 +122,15 @@ begin
     Result := 0;
     if RevStr.Length = 10 then
     begin
+{$IFDEF FPC}
+      fs := DefaultFormatSettings;
+{$ELSE}
+{$IFDEF FPC}
+      fs := DefaultFormatSettings;
+{$ELSE}
       fs := TFormatSettings.Create;
+{$ENDIF}
+{$ENDIF}
       fs.DateSeparator := '.';
       fs.ShortDateFormat := 'dd.MM.yyyy';
       RevStr := StringReplace(RevStr,'xx','01',[rfReplaceAll]);

@@ -23,9 +23,38 @@ unit uRules;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  System.Actions, Vcl.ActnList, System.Generics.Collections;
+{$IFDEF FPC}
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  StdCtrls,
+  ExtCtrls,
+  ActnList,
+  SysUtils,
+  Variants,
+  Classes,
+  Generics.Collections
+{$ELSE}
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  System.Actions,
+  Vcl.ActnList,
+  SysUtils,
+  Variants,
+  Classes,
+  Generics.Collections
+{$ENDIF}
+  ;
 
 type
   TfrmRules = class(TForm)
@@ -81,7 +110,7 @@ implementation
 
 uses uUtilities, uData, uMain, uStructures, uLanguages;
 
-{$R *.dfm}
+{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
 
 procedure TfrmRules.FormCreate(Sender: TObject);
 begin
@@ -154,7 +183,7 @@ end;
 
 procedure TfrmRules.FormShow(Sender: TObject);
 begin
-  LoadFile(Util.DIR + 'starter\reguly.txt');
+  LoadFile(Util.DIR + 'starter/reguly.txt');
   RefreshList;
 
   cbTypes.Items   := Main.cbTypes.Items;
@@ -211,14 +240,18 @@ procedure TfrmRules.Buttons(const Rule:TStringList);
 var
   i : Integer;
 begin
+{$IFDEF MSWINDOWS}
   SendMessage(sbButtons.Handle, WM_SETREDRAW, 0, 0);
+{$ENDIF}
 
   try
     for i := 0 to Rule.Count-1 do
       AddButon(Rule[i]);
   finally
+{$IFDEF MSWINDOWS}
     SendMessage(sbButtons.Handle, WM_SETREDRAW, 1, 0);
     RedrawWindow(sbButtons.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
+{$ENDIF}
   end;
 end;
 
@@ -314,7 +347,7 @@ begin
       RulesFile.Add(Rules[i].DelimitedText);
     end;
 
-  RulesFile.SaveToFile(Util.DIR + 'starter\reguly.txt');
+  RulesFile.SaveToFile(Util.DIR + 'starter/reguly.txt');
   RulesFile.Free;
 end;
 
@@ -331,7 +364,11 @@ begin
   Button                  := TButton.Create(sbButtons);
   Button.Parent           := sbButtons;
   Button.Align            := alLeft;
+{$IFDEF FPC}
+  Button.BorderSpacing.Around := 3;
+{$ELSE}
   Button.AlignWithMargins := True;
+{$ENDIF}
   Button.Action           := actButtonClick;
   Button.Caption          := UpperCase(Name);
   Button.Width            := Canvas.TextWidth(Button.Caption) + 10;

@@ -55,8 +55,8 @@ begin
 
       if Path.IsEmpty then
       begin
-        if FileExists(Util.DIR + 'starter\magazyn.ini') then
-          DepotFile.LoadFromFile(Util.DIR + 'starter\magazyn.ini')
+        if FileExists(Util.DIR + 'starter/magazyn.ini') then
+          DepotFile.LoadFromFile(Util.DIR + 'starter/magazyn.ini')
         else
           if FileExists(Util.DIR + 'starter.ini') then
             DepotFile.LoadFromFile(Util.DIR + 'starter.ini')
@@ -136,7 +136,7 @@ begin
       end;
     end;
 
-    DepotFile.SaveToFile(Util.DIR + 'starter\magazyn.ini');
+    DepotFile.SaveToFile(Util.DIR + 'starter/magazyn.ini');
   except
     Util.Log.Add(Lang.LabelStr(TEXT_DEPO_SAVE_FAULT));
   end;

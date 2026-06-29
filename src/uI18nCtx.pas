@@ -3,7 +3,9 @@ unit uI18nCtx;
 interface
 
 uses
-  System.SysUtils, uI18n, uUtilities;
+  SysUtils,
+  uI18n,
+  uUtilities;
 
 var
   GI18n: TI18n = nil;
@@ -20,7 +22,7 @@ begin
   GI18n := TI18n.Create;
 
   // Jeœli plik nie istnieje, Load zwróci False — to nas nie obchodzi
-  GI18n.Load(SceneryBaseDir, SceneryId, Util.Lang, '');
+  GI18n.Load(SceneryBaseDir, SceneryId, Util.LangStr, '');
 end;
 
 function TrToken(const S: string): string;

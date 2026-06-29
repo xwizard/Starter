@@ -22,8 +22,11 @@ unit uStructures;
 
 interface
 
-uses System.Generics.Collections, System.Generics.Defaults, CastaliaPasLexTypes,
-      Classes;
+uses
+  Generics.Collections,
+  Generics.Defaults,
+  CastaliaPasLexTypes,
+  Classes;
 
 type
   TFlag = (F128 = 128,F64 = 64,F32 = 32,F16 = 16,F8 = 8,F4 = 4,F2 = 2,F1 = 1);

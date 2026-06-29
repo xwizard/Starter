@@ -23,9 +23,41 @@ unit uKeyboard;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Generics.Collections, System.Generics.Defaults,
-  Vcl.Imaging.jpeg, Vcl.ExtCtrls, Vcl.StdCtrls, System.Actions, Vcl.ActnList;
+{$IFDEF FPC}
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  ExtCtrls,
+  StdCtrls,
+  ActnList,
+  SysUtils,
+  Variants,
+  Classes,
+  Generics.Collections,
+  Generics.Defaults
+{$ELSE}
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Imaging.jpeg,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  System.Actions,
+  Vcl.ActnList,
+  SysUtils,
+  Variants,
+  Classes,
+  Generics.Collections,
+  Generics.Defaults
+{$ENDIF}
+  ;
 
 type
   TKey = class
@@ -78,7 +110,7 @@ implementation
 
 uses uMain, uSettings, uUtilities, uLanguages;
 
-{$R *.dfm}
+{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
 
 procedure TfrmKeyboard.AddKey(const aKey:Integer;ASCII:string;PositionX,PositionY:Integer;const Width:Integer;const Height:Integer);
 var
@@ -183,7 +215,7 @@ begin
   AddKey(189,'-',463,61,40,40); // underscore
   AddKey(190,'.',435,185,39,39);     // period
   AddKey(191,'/',476,185,39,39);      // slash
-  AddKey(220,'\',566,103,60,39);  // backslash
+  AddKey(220,'/',566,103,60,39);  // backslash
   AddKey(221,'[',525,103,39,39); // rightbrace
   AddKey(219,']',485,103,39,39);  // leftbrace
   AddKey(222,'''',496,144,39,39); // apostrophe

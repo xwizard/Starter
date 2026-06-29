@@ -22,8 +22,13 @@ unit uParser;
 
 interface
 
-uses CastaliaPasLexTypes, uStructures, uLexer, Classes,
-     System.Generics.Collections, System.Generics.Defaults;
+uses
+  CastaliaPasLexTypes,
+  uStructures,
+  uLexer,
+  Classes,
+  Generics.Collections,
+  Generics.Defaults;
 
 type
 
@@ -62,7 +67,7 @@ type
 implementation
 
 uses SysUtils, uMain, uUtilities, Character, Math {$IFDEF DEBUG}{,System.Diagnostics}{$ENDIF}, uData,// uStart,
-    System.WideStrUtils, uSettingsAdv, uStart, strUtils, System.Diagnostics, uLanguages, uI18nCtx;
+    uSettingsAdv, uStart, strUtils, uLanguages, uI18nCtx;
 
 
 {$IFDEF DEBUG}
@@ -101,19 +106,19 @@ var
   Ilosc, Ilosc2 : Integer;
 begin
   try
-    Ilosc := FindFirst(Util.DIR + 'dynamic\*',faDirectory,SR);
+    Ilosc := FindFirst(Util.DIR + 'dynamic/*',faDirectory,SR);
 
     while (Ilosc = 0) do
     begin
       if (SR.Name <> '.') and (SR.Name <> '..') then
       begin
-        Ilosc2 := FindFirst(Util.DIR + 'dynamic\'+SR.Name+'\*',faDirectory,SR2);
+        Ilosc2 := FindFirst(Util.DIR + 'dynamic/'+SR.Name+'/*',faDirectory,SR2);
 
         while (Ilosc2 = 0) do
         begin
           if (SR2.Name <> '.') and (SR2.Name <> '..') then
-            if FileExists(Util.DIR + 'dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt') then
-              ParseTextures(Util.DIR + 'dynamic\' + SR.Name + '\' + SR2.Name + '\textures.txt');
+            if FileExists(Util.DIR + 'dynamic/' + SR.Name + '/' + SR2.Name + '/textures.txt') then
+              ParseTextures(Util.DIR + 'dynamic/' + SR.Name + '/' + SR2.Name + '/textures.txt');
 
           Ilosc2 := FindNext(SR2);
         end;
@@ -134,12 +139,12 @@ var
   Ilosc : Integer;
 begin
   try
-    Ilosc := FindFirst(Util.DIR + 'scenery\*.scn',faAnyFile,SR);
+    Ilosc := FindFirst(Util.DIR + 'scenery/*.scn',faAnyFile,SR);
 
     while (Ilosc = 0) do
     begin
       if SR.Name[1] <> '$' then
-        Data.Scenarios.Add(ScenarioName(Util.DIR + 'scenery\' + SR.Name));
+        Data.Scenarios.Add(ScenarioName(Util.DIR + 'scenery/' + SR.Name));
       Ilosc := FindNext(SR);
     end;
 
@@ -159,7 +164,7 @@ begin
       if not (Pos('trainset',Trainset) in [1..3]) then
         Trainset := 'trainset rozklad start 0 0 ' + Trainset;
 
-      Lexer.Origin := PChar(Trainset);
+      SetSource(Trainset);
 
       Result := ParseTrain;
     finally
@@ -273,11 +278,11 @@ begin
     Load.Desc := 'uruchomiony';
     Data.Loads.Add(Load);
 
-    if FileExists(Util.DIR + 'data\load_weights.txt') then
+    if FileExists(Util.DIR + 'data/load_weights.txt') then
     begin
-      LoadWeights.LoadFromFile(Util.DIR + 'data\load_weights.txt');
+      LoadWeights.LoadFromFile(Util.DIR + 'data/load_weights.txt');
 
-      Lexer.Origin := PChar(LoadWeights.Text);
+      SetSource(LoadWeights.Text);
 
       Lexer.NextNoSpace;
       While Lexer.TokenID <> ptNull do
@@ -333,7 +338,7 @@ begin
 
     Lexer.NextNoJunk;
     Result.Dir := GetToken;
-    Result.Dir := StringReplace(Result.Dir,'/','\',[]);
+    Result.Dir := StringReplace(Result.Dir,'/','/',[]);
 
     Lexer.NextNoJunk;
     Result.ReplacableSkin := ChangeFileExt(GetToken,'');
@@ -405,7 +410,7 @@ function TLexParser.GetBrakeValue(const Settings:string;Pos:Integer):string;
 begin
   result := '';
 
-  while (Settings[Pos].IsNumber) and (Pos <= Settings.Length) do
+  while (TCharacter.IsNumber(Settings[Pos])) and (Pos <= Settings.Length) do
   begin
     result := result + Settings[Pos];
     Inc(Pos);
@@ -436,7 +441,7 @@ begin
 
       Brakes := False;
       Wheels := False;
-      while (i <= Vehicle.Settings.Length) or (Vehicle.Settings[i].IsNumber) do
+      while (i <= Vehicle.Settings.Length) or (TCharacter.IsNumber(Vehicle.Settings[i])) do
       begin
         if Vehicle.Settings[i] = '.' then
         begin
@@ -552,7 +557,7 @@ begin
   try
     with TLexParser.Create do
     try
-      Lexer.Origin := PChar(Text);
+      SetSource(Text);
 
       result := '';
       EndPointer := 0;
@@ -697,12 +702,11 @@ begin
   Result.Path := Path;
   Result.Name := ExtractFileName(Path);
   Result.Name := Copy(Result.Name,0,Result.Name.Length-4);
-  LoadScenarioI18n(Util.DIR + 'scenery\', Result.Name);
+  LoadScenarioI18n(Util.DIR + 'scenery/', Result.Name);
 
   Plik := TSList.Create;
   Plik.LoadFromFile(Path);
-
-  Lexer.Origin := PChar(Plik.Text);
+  SetSource(Plik.Text);
 
   While Lexer.TokenID <> ptNull do
   begin
@@ -763,7 +767,7 @@ var
   SkipNextToken : Boolean;
 begin
   Util.LogAdd('-> Parsowanie scenerii ' + SCN.Name);
-  LoadScenarioI18n(Util.DIR + 'scenery\', SCN.Name);
+  LoadScenarioI18n(Util.DIR + 'scenery/', SCN.Name);
   SkipNextToken := False;
 
   with TLexParser.Create do
@@ -790,7 +794,7 @@ begin
       FirstInit       := TSList.Create;
       FirstInit.Text  := Copy(Plik.Text,FirstInitPos,Plik.Text.Length);
 
-      Lexer.Origin := PChar(Plik.Text);
+      SetSource(Plik.Text);
 
       Lexer.NextNoSpace;
       While Lexer.TokenID <> ptNull do
@@ -835,10 +839,10 @@ begin
 
               if Lexer.TokenPos > FirstInitPos then
               begin
-                if FileExists(Util.DIR + 'scenery\' + IncludeStr) then
+                if FileExists(Util.DIR + 'scenery/' + IncludeStr) then
                 begin
                   IncFirstInit := TSList.Create;
-                  IncFirstInit.LoadFromFile(Util.DIR + 'scenery\' + IncludeStr);
+                  IncFirstInit.LoadFromFile(Util.DIR + 'scenery/' + IncludeStr);
 
                   FirstInit.Add(IncFirstInit.Text);
                   IncFirstInit.Free;
@@ -893,7 +897,7 @@ var
   Pociag : TTrain;
 begin
   try
-    Lexer.Origin := PChar(TrainFile.Text);
+    SetSource(TrainFile.Text);
 
     While Lexer.TokenID <> ptNull do
     begin
@@ -1020,7 +1024,7 @@ begin
 
         if Pos('=',Plik[i]) > 0 then
         begin
-          Lexer.Origin := PChar(Plik[i]);
+          SetSource(Plik[i]);
 
           if Lexer.TokenID = ptSlashesComment then Continue;
 
@@ -1061,7 +1065,7 @@ begin
 
           for y := 0 to Tex.Models.Count-1 do
           begin
-            ModelPath := Util.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model;
+            ModelPath := Util.DIR + 'dynamic/' + Tex.Dir + '/' + Tex.Models[y].Model;
 
             if FileExists(ModelPath + '.fiz') or
                FileExists(ModelPath + 'dumb.fiz') then
@@ -1086,7 +1090,7 @@ begin
               Tex.Models[y].Fiz := nil;
             end;
 
-            if not FileExists(Util.DIR + 'dynamic\' + Tex.Dir + '\' + Tex.Models[y].Model + '.mmd') then
+            if not FileExists(Util.DIR + 'dynamic/' + Tex.Dir + '/' + Tex.Models[y].Model + '.mmd') then
                 Include(Tex.Errors,teNoMultimedia);
           end;
 
@@ -1153,7 +1157,7 @@ var
   BasePath : string;
 begin
   try
-    BasePath := Util.DIR + 'dynamic\' + Physics.Dir + '\';
+    BasePath := Util.DIR + 'dynamic/' + Physics.Dir + '/';
 
     Params := TList<TPhysicsInc>.Create;
 
@@ -1178,7 +1182,7 @@ begin
         PhysicsFile.LoadFromFile(BasePath + Path);
 
     Section := psOther;
-    Lexer.Origin := PChar(PhysicsFile.Text);
+    SetSource(PhysicsFile.Text);
 
     While Lexer.TokenID <> ptNull do
     begin

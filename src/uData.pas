@@ -22,8 +22,13 @@ unit uData;
 
 interface
 
-uses System.Generics.Collections, System.Generics.Defaults, uStructures, uParser,
-     uUtilities, Classes;
+uses
+  Generics.Collections,
+  Generics.Defaults,
+  uStructures,
+  uParser,
+  uUtilities,
+  Classes;
 
 type
 

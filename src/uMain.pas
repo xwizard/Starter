@@ -19,18 +19,63 @@
 }
 
 //{$O+}
-{$INLINE AUTO}
+{$IFDEF FPC}{$INLINE ON}{$ELSE}{$INLINE AUTO}{$ENDIF}
 
 unit uMain;
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
-  Vcl.Graphics,Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  System.Generics.Collections, System.Generics.Defaults, uStructures,
-  Vcl.ComCtrls, uSettings, Vcl.CheckLst, Vcl.Menus, System.Actions, Vcl.ActnList,
-  Vcl.Grids, Vcl.Imaging.pngimage, Vcl.Samples.Spin;
+{$IFDEF FPC}
+  LCLIntf,
+  LCLType,
+  LMessages,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  StdCtrls,
+  ExtCtrls,
+  ComCtrls,
+  CheckLst,
+  Menus,
+  ActnList,
+  Grids,
+  Spin,
+  DateTimePicker,
+  SysUtils,
+  Variants,
+  Classes,
+  Generics.Collections,
+  Generics.Defaults,
+  uStructures,
+  uSettings
+{$ELSE}
+  Winapi.Windows,
+  Winapi.Messages,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  Vcl.CheckLst,
+  Vcl.Menus,
+  System.Actions,
+  Vcl.ActnList,
+  Vcl.Grids,
+  Vcl.Imaging.pngimage,
+  Vcl.Samples.Spin,
+  SysUtils,
+  Variants,
+  Classes,
+  Generics.Collections,
+  Generics.Defaults,
+  uStructures,
+  uSettings
+{$ENDIF}
+  ;
 
 type
   TMain = class(TForm)
@@ -738,10 +783,29 @@ var
 
 implementation
 
-uses DateUtils, JPEG, uParser, uSettingsAdv, uUpdater, uSearch, uTextureBase, uDepot,
-     uUART, uAbout, Clipbrd, StrUtils, uTexRandomizer, uUtilities, uLanguages, uData, uKeyboard, uStart;
+uses DateUtils, uParser, uSettingsAdv, uSearch, uTextureBase, uDepot,
+     uUART, uAbout, Clipbrd, StrUtils, uTexRandomizer, uUtilities, uLanguages, uData, uKeyboard, uStart
+{$IFNDEF FPC}, JPEG{$ENDIF}
+{$IFDEF MSWINDOWS}, uUpdater{$ENDIF};
 
-{$R *.dfm}
+{$IFDEF FPC}
+function CmpIntDescFPC(constref Left, Right: Integer): Integer;
+begin
+  Result := Right - Left;
+end;
+
+function CmpVehFPC(constref L, R: TTrain): Integer;
+begin
+  Result := CompareVehicleNames(Pointer(L), Pointer(R));
+end;
+
+function CmpTrainFPC(constref L, R: TTrain): Integer;
+begin
+  Result := CompareTrainNames(Pointer(L), Pointer(R));
+end;
+{$ENDIF}
+
+{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
 
 procedure TMain.actAboutExecute(Sender: TObject);
 begin
@@ -794,17 +858,17 @@ end;
 
 procedure TMain.InstrukcjaoprowadzeniumanewrwIr91Click(Sender: TObject);
 begin
-  Util.OpenFile('\przepisy_kolejowe\ir-9.pdf');
+  Util.OpenFile('/przepisy_kolejowe/ir-9.pdf');
 end;
 
 procedure TMain.Instrukcjaoprowadzeniuradiocznoci1Click(Sender: TObject);
 begin
-  Util.OpenFile('\przepisy_kolejowe\ir-5.pdf');
+  Util.OpenFile('/przepisy_kolejowe/ir-5.pdf');
 end;
 
 procedure TMain.InstrukcjaoprowadzeniuruchupocigwIr11Click(Sender: TObject);
 begin
-  Util.OpenFile('\przepisy_kolejowe\ir-1.pdf');
+  Util.OpenFile('/przepisy_kolejowe/ir-1.pdf');
 end;
 
 function TMain.IsVehicleName(const Name:string):Integer;
@@ -1072,10 +1136,12 @@ end;
 
 procedure TMain.actCheckUpdateExecute(Sender: TObject);
 begin
+{$IFDEF MSWINDOWS}
   if edUpdateInterval.Value < 0 then
     TfrmUpdater.UpdateProgram(True)
   else
     TfrmUpdater.UpdateProgram;
+{$ENDIF}
 end;
 
 procedure TMain.actCOMExecute(Sender: TObject);
@@ -1348,7 +1414,7 @@ end;
 procedure TMain.actOpenTexDirExecute(Sender: TObject);
 begin
   if lbTextures.ItemIndex >= 0 then
-    OpenDir(Util.DIR + 'dynamic\' + (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture).Dir);
+    OpenDir(Util.DIR + 'dynamic/' + (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture).Dir);
 end;
 
 procedure TMain.actPasteFromClipboardExecute(Sender: TObject);
@@ -1367,13 +1433,13 @@ end;
 
 procedure TMain.actPresetExecute(Sender: TObject);
 begin
-  if FileExists(Util.INIDir + 'starter\#' + cbPreset.Items[cbPreset.ItemIndex] + '.ini') then
+  if FileExists(Util.INIDir + 'starter/#' + cbPreset.Items[cbPreset.ItemIndex] + '.ini') then
   begin
     Settings.ReadSettings('#' + cbPreset.Items[cbPreset.ItemIndex]);
     ReloadSettingsState;
   end
   else
-    ShowMessage(Lang.LabelStr(TEXT_FILE_NOT_FOUND,[Util.INIDir + 'starter\#' + cbPreset.Items[cbPreset.ItemIndex] + '.ini']));
+    ShowMessage(Lang.LabelStr(TEXT_FILE_NOT_FOUND,[Util.INIDir + 'starter/#' + cbPreset.Items[cbPreset.ItemIndex] + '.ini']));
 end;
 
 procedure TMain.actPresetSaveExecute(Sender: TObject);
@@ -1388,7 +1454,7 @@ begin
   then
     if Trim(FileName).Length > 0 then
     begin
-      Settings.SaveSettings('starter\#' + FileName + '.ini');
+      Settings.SaveSettings('starter/#' + FileName + '.ini');
       Settings.LoadPresets;
     end;
 end;
@@ -1505,6 +1571,9 @@ var
 begin
   if Indexes <> nil then
   begin
+{$IFDEF FPC}
+    Indexes.Sort(TComparer<Integer>.Construct(@CmpIntDescFPC));
+{$ELSE}
     Indexes.Sort(
       TComparer<Integer>.Construct(
         function(const Left, Right: Integer): Integer
@@ -1513,6 +1582,7 @@ begin
         end
       )
     );
+{$ENDIF}
 
     for i := 0 to Indexes.Count-1 do
       Train.Vehicles.Extract(Train.Vehicles[Indexes[i]]);
@@ -1669,7 +1739,7 @@ begin
   Config.Temperature  := tbTemperature.Position;
   Config.Time         := dtTime.Time;
   SCN.Config := Config;
-  Starter.Text := TLexParser.ChangeConfig(SCN.Other.Text,SCN.Config);
+  Starter.Text := EnsureUTF8(TLexParser.ChangeConfig(SCN.Other.Text,SCN.Config));
 
   for i := 0 to SCN.Includes.Count-1 do
     if SCN.Includes[i].Kind = itTerrain then
@@ -1716,7 +1786,7 @@ begin
   for i := 0 to SCN.Vehicles.Count-1 do
     Starter.Add(PrepareNode(SCN.Vehicles[i],False));
 
-  Starter.SaveToFile(Util.DIR + 'scenery\$' + SCN.Name + '.scn');
+  Starter.SaveToFile(Util.DIR + 'scenery/$' + SCN.Name + '.scn');
   Starter.Free;
   LaunchSimulator;
 end;
@@ -1810,8 +1880,10 @@ end;
 procedure TMain.btnCheckUpdateMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
+{$IFDEF MSWINDOWS}
   if ssRight in Shift then
     TfrmUpdater.UpdateProgram(True);
+{$ENDIF}
 end;
 
 procedure TMain.btnHelpClick(Sender: TObject);
@@ -1979,7 +2051,7 @@ begin
     if Train.Vehicles[SelVehicle].CabOccupancy in [coHeadDriver, coRearDriver, coPassenger] then
       Mark(SelImage)
     else
-      Mark(SelImage,clWebLimeGreen);
+      Mark(SelImage,TColor($0032CD32));
   end;
 end;
 
@@ -2308,10 +2380,10 @@ begin
     for i := 0 to slModels.Count-1 do
     begin
       Bitmap := TBitmap.Create;
-      if FileExists(Util.DIR + 'textures\mini\' + slModels[i] + '.bmp') then
-        Bitmap.LoadFromFile(Util.DIR + 'textures\mini\' + slModels[i] + '.bmp')
+      if FileExists(Util.DIR + 'textures/mini/' + slModels[i] + '.bmp') then
+        Bitmap.LoadFromFile(Util.DIR + 'textures/mini/' + slModels[i] + '.bmp')
       else
-        Bitmap.LoadFromFile(Util.DIR + 'textures\mini\other.bmp');
+        Bitmap.LoadFromFile(Util.DIR + 'textures/mini/other.bmp');
       Images.Add(Bitmap);
     end;
 
@@ -2451,7 +2523,7 @@ begin
   else
   if Pages.ActivePage = tsSettings then
   begin
-    chAngle.Visible := FileExists(Util.Dir + '\libEGL.dll') and FileExists(Util.Dir + '\libGLESv2.dll');
+    chAngle.Visible := FileExists(Util.Dir + '/libEGL.dll') and FileExists(Util.Dir + '/libGLESv2.dll');
     if cbPreset.Items.Count = 0 then
       Settings.LoadPresets;
   end;
@@ -2573,7 +2645,11 @@ begin
     tvSCN.SetFocus;
   end;
 
+{$IFDEF FPC}
+  tvSCN.AlphaSort;
+{$ELSE}
   tvSCN.Items.AlphaSort;
+{$ENDIF}
   tvSCN.Items.EndUpdate;
 end;
 
@@ -2615,6 +2691,11 @@ begin
     lbDepot.Clear;
 
     if miSortByVehicleName.Checked then
+{$IFDEF FPC}
+      Data.Depot.Sort(TComparer<TTrain>.Construct(@CmpVehFPC))
+    else
+      Data.Depot.Sort(TComparer<TTrain>.Construct(@CmpTrainFPC));
+{$ELSE}
       Data.Depot.Sort(TComparer<TTrain>.Construct(
           function (const L, R: TTrain): integer
           begin
@@ -2626,6 +2707,7 @@ begin
           begin
             result := CompareTrainNames(L, R);
           end));
+{$ENDIF}
 
     for i := 0 to Data.Depot.Count-1 do
       if Data.Depot[i].TrainName.Length > 0 then
@@ -2676,17 +2758,17 @@ begin
     for i := 0 to Data.Textures.Count-1 do
     begin
       if TTexError.teNoFile in Data.Textures[i].Errors then
-        Util.LogAdd(Lang.LabelStr(TEXT_TEX_NO_FILE) + ' ' + Data.Textures[i].Dir + '\' + Data.Textures[i].Plik);
+        Util.LogAdd(Lang.LabelStr(TEXT_TEX_NO_FILE) + ' ' + Data.Textures[i].Dir + '/' + Data.Textures[i].Plik);
       if TTexError.teNoModel in Data.Textures[i].Errors then
-        Util.LogAdd(Lang.LabelStr(TEXT_TEX_NO_MODEL) + ' ' + Data.Textures[i].Dir + '\' + Data.Textures[i].Plik);
+        Util.LogAdd(Lang.LabelStr(TEXT_TEX_NO_MODEL) + ' ' + Data.Textures[i].Dir + '/' + Data.Textures[i].Plik);
       if TTexError.teNoPhysics in Data.Textures[i].Errors then
-        Util.LogAdd(Lang.LabelStr(TEXT_TEX_NO_PHYSICS) + ' ' + Data.Textures[i].Dir + '\' + Data.Textures[i].Plik);
+        Util.LogAdd(Lang.LabelStr(TEXT_TEX_NO_PHYSICS) + ' ' + Data.Textures[i].Dir + '/' + Data.Textures[i].Plik);
       if TTexError.teNoMultimedia in Data.Textures[i].Errors then
-        Util.LogAdd(Lang.LabelStr(TEXT_TEX_NO_MULTIMEDIA) + ' ' + Data.Textures[i].Dir + '\' + Data.Textures[i].Plik);
+        Util.LogAdd(Lang.LabelStr(TEXT_TEX_NO_MULTIMEDIA) + ' ' + Data.Textures[i].Dir + '/' + Data.Textures[i].Plik);
     end;
 
   if ForceDirectories(Util.DIR + 'starter') then
-    Util.Log.SaveToFile(Util.DIR + 'starter\bledy.txt');
+    Util.Log.SaveToFile(Util.DIR + 'starter/bledy.txt');
 
   Util.Destroy;
 end;
@@ -2703,7 +2785,11 @@ end;
 procedure TMain.FormShow(Sender: TObject);
 begin
   TfrmStart.GetInstance.UpdateLabel(Lang.LabelStr(TEXT_LOAD_SETTINGS));
+{$IFDEF FPC}
+  TDepotThread.Create(False);
+{$ELSE}
   TDepotThread.Create;
+{$ENDIF}
   DefaultSettings;
   Settings.ReadSettings;
   ReloadSettingsState;
@@ -2840,7 +2926,7 @@ begin
       imScenario.Picture.Assign(nil);
 
     meDesc.Lines.BeginUpdate;
-    meDesc.Text := SCN.Desc.Text;
+    meDesc.Text := EnsureUTF8(SCN.Desc.Text);
     meDesc.Lines.EndUpdate;
 
     LoadTrains(SCN.Trains);
@@ -3174,7 +3260,7 @@ begin
     meMission.Clear;
     if Train.AI then
       meMission.Lines.Add(Lang.LabelStr(TEXT_AI_TRAIN));
-    meMission.Lines.Add(Train.Desc);
+    meMission.Lines.Add(EnsureUTF8(Train.Desc));
     meMission.Lines.EndUpdate;
 
     if IsParameter('utf8') then
@@ -3183,11 +3269,19 @@ begin
     meTimetable.Lines.BeginUpdate;
     meTimetable.Text := '';
 
-    if (Train.TimeTable.Length > 0) and (FileExists(Util.DIR + 'scenery\' + Train.TimeTable + '.txt')) then
-      meTimetable.Lines.LoadFromFile(Util.DIR + 'scenery\' + Train.TimeTable + '.txt')
+    if (Train.TimeTable.Length > 0) and (FileExists(Util.DIR + 'scenery/' + Train.TimeTable + '.txt')) then
+{$IFDEF FPC}
+      meTimetable.Text := EnsureUTF8(ReadFileRaw(Util.DIR + 'scenery/' + Train.TimeTable + '.txt'))
+{$ELSE}
+      meTimetable.Lines.LoadFromFile(Util.DIR + 'scenery/' + Train.TimeTable + '.txt')
+{$ENDIF}
     else
-      if FileExists(Util.DIR + 'scenery\' + Train.TrainName + '.txt') then
-        meTimetable.Lines.LoadFromFile(Util.DIR + 'scenery\' + Train.TrainName + '.txt' );
+      if FileExists(Util.DIR + 'scenery/' + Train.TrainName + '.txt') then
+{$IFDEF FPC}
+        meTimetable.Text := EnsureUTF8(ReadFileRaw(Util.DIR + 'scenery/' + Train.TrainName + '.txt'));
+{$ELSE}
+        meTimetable.Lines.LoadFromFile(Util.DIR + 'scenery/' + Train.TrainName + '.txt' );
+{$ENDIF}
 
     meTimetable.Lines.EndUpdate;
 
@@ -3215,10 +3309,10 @@ var
   Mini : TJPEGImage;
 begin
   try
-    if FileExists(Util.DIR + 'scenery\images\' + Name) then
+    if FileExists(Util.DIR + 'scenery/images/' + Name) then
     begin
       Mini := TJPEGImage.Create;
-      Mini.LoadFromFile(Util.DIR + 'scenery\images\' + Name);
+      Mini.LoadFromFile(Util.DIR + 'scenery/images/' + Name);
       imScenario.Picture.Bitmap.Assign(Mini);
       Mini.Free;
     end
@@ -3266,7 +3360,7 @@ begin
   Mark.OnDragDrop   := ShapeDragDrop;
   Mark.OnMouseDown  := OnMouseDown;
   Mark.Hint         := Image.Hint;
-  Mark.ShowHint     := Mark.Hint.Length > 0;
+  Mark.ShowHint     := Length(Mark.Hint) > 0;
 end;
 
 procedure TMain.SelectVehicle(const Sender:TObject;const SelectTex:Boolean=True);
@@ -3277,7 +3371,7 @@ begin
     if Train.Vehicles[SelVehicle].CabOccupancy in [coHeadDriver, coRearDriver, coPassenger] then
       Mark(Sender as TImage)
     else
-      Mark(Sender as TImage,clWebLimeGreen);
+      Mark(Sender as TImage,TColor($0032CD32));
   end
   else
   if Sender is TShape then
@@ -3398,8 +3492,8 @@ begin
 
   if ModelID >= 0 then
   begin
-    lbModel.Caption     := Tex.Dir + '\' + Tex.Models[ModelID].Model;
-    lbModel.Hint        := 'dynamic\' + Tex.Dir + '\';
+    lbModel.Caption     := Tex.Dir + '/' + Tex.Models[ModelID].Model;
+    lbModel.Hint        := 'dynamic/' + Tex.Dir + '/';
   end
   else
     lbModel.Caption := '';
@@ -3524,7 +3618,9 @@ var
   i, ImageWidth, ScrollPos : Integer;
   Image : TImage;
 begin
+{$IFDEF MSWINDOWS}
   SendMessage(sbTrain.Handle, WM_SETREDRAW, 0, 0);
+{$ENDIF}
   try
     ImageWidth  := 0;
     ScrollPos := sbTrain.HorzScrollBar.Position;
@@ -3565,8 +3661,10 @@ begin
     LoadTrainParams;
 
   finally
+{$IFDEF MSWINDOWS}
     SendMessage(sbTrain.Handle, WM_SETREDRAW, 1, 0);
     RedrawWindow(sbTrain.Handle, nil, 0, RDW_ERASE or RDW_INVALIDATE or RDW_FRAME or RDW_ALLCHILDREN);
+{$ENDIF}
   end;
 end;
 
@@ -3660,7 +3758,11 @@ begin
   Width := (tsMain.Width div 2) - 270;
   pnlLeftMargin1.Width := Width;
   pnlLeftMargin2.Width := Width;
+{$IFDEF FPC}
+  pnlGraphic.BorderSpacing.Left := Clamp(tsGraphics.Width div 2 - 435,0,800);
+{$ELSE}
   pnlGraphic.Margins.Left := Clamp(tsGraphics.Width div 2 - 435,0,800);
+{$ENDIF}
 end;
 
 procedure TMain.pcTrainsChange(Sender: TObject);
@@ -3692,7 +3794,7 @@ end;
 
 procedure TMain.pmHelpPopup(Sender: TObject);
 begin
-  miInstructions.Visible := DirectoryExists(Util.Dir + '\przepisy_kolejowe');
+  miInstructions.Visible := DirectoryExists(Util.Dir + '/przepisy_kolejowe');
 end;
 
 procedure TMain.pmStartPopup(Sender: TObject);
@@ -3765,7 +3867,7 @@ end;
 
 procedure TMain.miIe1Click(Sender: TObject);
 begin
-  Util.OpenFile('\przepisy_kolejowe\ie-1.pdf');
+  Util.OpenFile('/przepisy_kolejowe/ie-1.pdf');
 end;
 
 procedure TMain.ReplaceTrain(const Vehicles:TObjectList<TVehicle>);
@@ -3981,9 +4083,9 @@ begin
 
   if (Param <> nil) then
     if SameText(Param.Value,'pl') then
-      Util.OpenFile('\readme.html')
+      Util.OpenFile('/readme.html')
     else
-      Util.OpenFile('\en-readme.html');
+      Util.OpenFile('/en-readme.html');
 end;
 
 procedure TMain.miOpenVehicleDirClick(Sender: TObject);
@@ -3992,7 +4094,7 @@ var
 begin
   Tex := (lbTextures.Items.Objects[lbTextures.ItemIndex] as TTexture);
   if Tex <> nil then
-    OpenDir(Util.DIR + 'dynamic\' + Tex.Dir);
+    OpenDir(Util.DIR + 'dynamic/' + Tex.Dir);
 end;
 
 procedure TMain.actRandomLoadExecute(Sender: TObject);
