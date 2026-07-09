@@ -93,6 +93,10 @@ uses SysUtils, Dialogs, uMain,
     {, RTTI};
 
 function INIPath:string;
+{$IFNDEF MSWINDOWS}
+var
+  Home : string;
+{$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
   Result := SysUtils.GetEnvironmentVariable('APPDATA');
@@ -102,7 +106,20 @@ begin
   else
     Result := Util.Dir;
 {$ELSE}
-  Result := IncludeTrailingPathDelimiter(GetAppConfigDir(False)) + 'MaSzyna' + PathDelim;
+  // Mirror the engine's user_config_path (../maszyna, utilities/utilities.cpp):
+  //   macOS -> $HOME/Library/Application Support/MaSzyna/
+  //   other -> $HOME/.config/MaSzyna/
+  // so the launcher reads/writes eu07.ini where the simulator actually reads it.
+  Home := SysUtils.GetEnvironmentVariable('HOME');
+
+  if Home <> '' then
+    {$IFDEF DARWIN}
+    Result := IncludeTrailingPathDelimiter(Home) + 'Library/Application Support/MaSzyna/'
+    {$ELSE}
+    Result := IncludeTrailingPathDelimiter(Home) + '.config/MaSzyna/'
+    {$ENDIF}
+  else
+    Result := Util.Dir;
 {$ENDIF}
 end;
 

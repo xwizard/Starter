@@ -313,8 +313,18 @@ begin
 end;
 
 function TSettings.SaveIni(const FileName:string;const INIFile:TStringList):TDateTime;
+var
+  UseINIDir : Boolean;
 begin
-  if (eu07exeVersion > 2510) and (ForceDirectories(ExtractFilePath(Util.INIDir + FileName))) then
+  {$IFDEF MSWINDOWS}
+  UseINIDir := (eu07exeVersion > 2510);
+  {$ELSE}
+  // On mac/Linux the engine always prefers user_config_path and the exe-version
+  // probe (GetFileVersion) is unavailable, so always target the user config dir.
+  UseINIDir := True;
+  {$ENDIF}
+
+  if UseINIDir and (ForceDirectories(ExtractFilePath(Util.INIDir + FileName))) then
   begin
     INIFile.SaveToFile(Util.INIDir + FileName);
     FileAge(Util.INIDir + FileName,Result);
@@ -1513,7 +1523,15 @@ var
   FileName   : string;
   LastChange : TDateTime;
 begin
+  {$IFDEF MSWINDOWS}
   FileName := Util.DIR + 'eu07.ini';
+  {$ELSE}
+  // Watch the file LoadIni actually reads: INIDir first, else the install dir.
+  if FileExists(Util.INIDir + 'eu07.ini') then
+    FileName := Util.INIDir + 'eu07.ini'
+  else
+    FileName := Util.DIR + 'eu07.ini';
+  {$ENDIF}
   FileAge(FileName,LastChange);
 
   if LastChange > 0 then
