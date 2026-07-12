@@ -977,6 +977,7 @@ object Main: TMain
             TabOrder = 0
             OnChange = tvSCNChange
             OnCompare = tvSCNCompare
+            OnMouseUp = tvSCNMouseUp
           end
           object chHideArchival: TCheckBox
             Left = 0

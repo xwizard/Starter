@@ -563,6 +563,7 @@ type
     procedure actPasteFromClipboardUpdate(Sender: TObject);
     procedure lbModelDblClick(Sender: TObject);
     procedure tvSCNChange(Sender: TObject; Node: TTreeNode);
+    procedure tvSCNMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure cbGfxrendererChange(Sender: TObject);
     procedure imLangClick(Sender: TObject);
     procedure cbModelsChange(Sender: TObject);
@@ -2925,6 +2926,28 @@ begin
     cbOvercast.ItemIndex := 0;
 
   dtTime.Time := aSCN.Config.Time;
+end;
+
+procedure TMain.tvSCNMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+  Node: TTreeNode;
+begin
+  if Button <> mbLeft then Exit;
+  Node := tvSCN.GetNodeAt(X, Y);
+  if not Assigned(Node) then Exit;
+
+  // wezel kategorii (Data=nil): rozwin/zwin
+  if (Node.Data = nil) and Node.HasChildren then
+    Node.Expanded := not Node.Expanded;
+
+  // wymus zaznaczenie na poziomie LCL -> odpala tvSCNChange -> LoadScenery
+  if tvSCN.Selected <> Node then
+    tvSCN.Selected := Node
+  else
+    tvSCNChange(tvSCN, Node);
+
+  tvSCN.Invalidate;
 end;
 
 procedure TMain.tvSCNChange(Sender: TObject; Node: TTreeNode);
