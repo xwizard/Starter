@@ -3176,7 +3176,7 @@ object Main: TMain
                       Constraints.MaxHeight = 35
                       MaxLength = 1
                       MaxValue = 7
-                      MinValue = 1
+                      MinValue = 0
                       TabOrder = 0
                       Value = 1
                     end

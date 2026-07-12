@@ -23,7 +23,6 @@ unit uKeyboard;
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -38,26 +37,7 @@ uses
   Variants,
   Classes,
   Generics.Collections,
-  Generics.Defaults
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.Imaging.jpeg,
-  Vcl.ExtCtrls,
-  Vcl.StdCtrls,
-  System.Actions,
-  Vcl.ActnList,
-  SysUtils,
-  Variants,
-  Classes,
-  Generics.Collections,
-  Generics.Defaults
-{$ENDIF}
-  ;
+  Generics.Defaults;
 
 type
   TKey = class
@@ -110,7 +90,7 @@ implementation
 
 uses uMain, uSettings, uUtilities, uLanguages;
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 procedure TfrmKeyboard.AddKey(const aKey:Integer;ASCII:string;PositionX,PositionY:Integer;const Width:Integer;const Height:Integer);
 var

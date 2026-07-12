@@ -81,16 +81,12 @@ var
 implementation
 
 uses SysUtils, Dialogs, uMain,
-    uData, StrUtils, uSettingsAdv, StdCtrls, Controls, uLanguages
-{$IFDEF FPC}
-    , Forms, LCLIntf, LCLType, process, LazUTF8, LConvEncoding
-{$ELSE}
-    , Vcl.Forms, JPEG
-{$ENDIF}
+    uData, StrUtils, uSettingsAdv, StdCtrls, Controls, uLanguages,
+    Forms, LCLIntf, LCLType, process, LazUTF8, LConvEncoding
 {$IFDEF MSWINDOWS}
     , Windows, ShellApi
 {$ENDIF}
-    {, RTTI};
+    ;
 
 function INIPath:string;
 {$IFNDEF MSWINDOWS}
@@ -211,11 +207,7 @@ end;
 
 function TUtil.Ask(const Text:string):Boolean;
 begin
-{$IFDEF FPC}
   with CreateMessageDialog(Text, mtCustom, [mbYes, mbNo]) do
-{$ELSE}
-  with CreateMessageDialog(Text, mtCustom, [mbYes, mbNo], mbNo) do
-{$ENDIF}
     begin
       try
         if FindComponent('Yes') <> nil then
@@ -446,16 +438,12 @@ end;
 
 function EnsureUTF8(const S: string): string;
 begin
-{$IFDEF FPC}
   // MaSzyna data files are CP1250; the LCL/Cocoa text controls require valid
   // UTF-8. Leave already-valid UTF-8 untouched, otherwise transcode from CP1250.
   if (S = '') or (FindInvalidUTF8Codepoint(PChar(S), Length(S)) < 0) then
     Result := S
   else
     Result := CP1250ToUTF8(S);
-{$ELSE}
-  Result := S;
-{$ENDIF}
 end;
 
 { TUtil }

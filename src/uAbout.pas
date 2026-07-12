@@ -23,7 +23,6 @@ unit uAbout;
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -36,22 +35,7 @@ uses
   ComCtrls,
   SysUtils,
   Variants,
-  Classes
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.StdCtrls,
-  Vcl.ExtCtrls,
-  Vcl.ComCtrls,
-  SysUtils,
-  Variants,
-  Classes
-{$ENDIF}
-  ;
+  Classes;
 
 type
   TfrmAbout = class(TForm)
@@ -83,7 +67,7 @@ implementation
 
 uses uUtilities, uLanguages;
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 procedure TfrmAbout.FormCreate(Sender: TObject);
 begin

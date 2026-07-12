@@ -23,7 +23,6 @@ unit uRules;
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -37,24 +36,7 @@ uses
   SysUtils,
   Variants,
   Classes,
-  Generics.Collections
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.StdCtrls,
-  Vcl.ExtCtrls,
-  System.Actions,
-  Vcl.ActnList,
-  SysUtils,
-  Variants,
-  Classes,
-  Generics.Collections
-{$ENDIF}
-  ;
+  Generics.Collections;
 
 type
   TfrmRules = class(TForm)
@@ -110,7 +92,7 @@ implementation
 
 uses uUtilities, uData, uMain, uStructures, uLanguages;
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 procedure TfrmRules.FormCreate(Sender: TObject);
 begin
@@ -364,11 +346,7 @@ begin
   Button                  := TButton.Create(sbButtons);
   Button.Parent           := sbButtons;
   Button.Align            := alLeft;
-{$IFDEF FPC}
   Button.BorderSpacing.Around := 3;
-{$ELSE}
-  Button.AlignWithMargins := True;
-{$ENDIF}
   Button.Action           := actButtonClick;
   Button.Caption          := UpperCase(Name);
   Button.Width            := Canvas.TextWidth(Button.Caption) + 10;

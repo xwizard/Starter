@@ -23,7 +23,6 @@ unit uTextureBase;
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -41,23 +40,6 @@ uses
   Variants,
   Classes,
   uStructures
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.ComCtrls,
-  Vcl.Grids,
-  Vcl.ExtCtrls,
-  Vcl.StdCtrls,
-  Vcl.Menus,
-  SysUtils,
-  Variants,
-  Classes,
-  uStructures
-{$ENDIF}
   ;
 
 type
@@ -137,7 +119,7 @@ implementation
 
 uses uMain, uLanguages, Clipbrd, uUtilities, uData;
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 procedure TfrmTextureBase.cbOperatorClick(Sender: TObject);
 begin
@@ -226,11 +208,7 @@ begin
     if (cbRevStart.Checked) or (cbRevEnd.Checked) then
       if RevStr.Length = 10 then
       begin
-{$IFDEF FPC}
         fs := DefaultFormatSettings;
-{$ELSE}
-        fs := TFormatSettings.Create;
-{$ENDIF}
         fs.DateSeparator := '.';
         fs.ShortDateFormat := 'dd.MM.yyyy';
         RevStr := StringReplace(RevStr,'xx','01',[rfReplaceAll]);
@@ -360,11 +338,7 @@ begin
     sgDepo.Canvas.Font.Color := clYellow;
     RectForText := Rect;
     InflateRect(RectForText, -6, -8);
-{$IFDEF FPC}
     sgDepo.Canvas.TextRect(RectForText, RectForText.Left, RectForText.Top, S);
-{$ELSE}
-    sgDepo.Canvas.TextRect(RectForText,S);
-{$ENDIF}
   end;
 end;
 

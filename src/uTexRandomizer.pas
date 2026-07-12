@@ -23,7 +23,6 @@ unit uTexRandomizer;
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -38,24 +37,7 @@ uses
   Variants,
   Classes,
   uStructures,
-  Generics.Collections
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.StdCtrls,
-  Vcl.Samples.Spin,
-  Vcl.ExtCtrls,
-  SysUtils,
-  Variants,
-  Classes,
-  uStructures,
-  Generics.Collections
-{$ENDIF}
-  ;
+  Generics.Collections;
 
 type
   TTexFilter = class
@@ -119,7 +101,7 @@ implementation
 
 uses uMain, uData, uUtilities, uRules, uLanguages;
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 { TexRandomizer }
 

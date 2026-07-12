@@ -17,7 +17,7 @@
   You should have received a copy of the GNU General Public License
   along with Starter.  If not, see <http://www.gnu.org/licenses/>.
 
-  Lazarus/FPC program file (dual-build counterpart of Starter.dpr).
+  Lazarus/FPC program file.
 }
 program Starter;
 
@@ -52,7 +52,7 @@ uses
   uI18nCtx,
   uKeyboard,
   uRules
-  {$IFDEF MSWINDOWS}
+  {$IFDEF ENABLE_UPDATER}
   , uUpdater
   {$ENDIF}
   ;
@@ -62,10 +62,8 @@ uses
 {$ENDIF}
 
 begin
-{$IFDEF FPC}
   try
   ApplyLazFixups;
-{$ENDIF}
   Application.Initialize;
   Application.Title := 'Starter MaSzyna';
 
@@ -82,7 +80,6 @@ begin
   Application.CreateForm(TMain, Main);
   Application.CreateForm(TfrmSettingsAdv, frmSettingsAdv);
   Application.Run;
-{$IFDEF FPC}
   except
     on E: Exception do
       with TStringList.Create do
@@ -93,5 +90,4 @@ begin
         Free;
       end;
   end;
-{$ENDIF}
 end.

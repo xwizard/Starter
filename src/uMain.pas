@@ -19,14 +19,13 @@
 }
 
 //{$O+}
-{$IFDEF FPC}{$INLINE ON}{$ELSE}{$INLINE AUTO}{$ENDIF}
+{$INLINE ON}
 
 unit uMain;
 
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -49,33 +48,7 @@ uses
   Generics.Collections,
   Generics.Defaults,
   uStructures,
-  uSettings
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.StdCtrls,
-  Vcl.ExtCtrls,
-  Vcl.ComCtrls,
-  Vcl.CheckLst,
-  Vcl.Menus,
-  System.Actions,
-  Vcl.ActnList,
-  Vcl.Grids,
-  Vcl.Imaging.pngimage,
-  Vcl.Samples.Spin,
-  SysUtils,
-  Variants,
-  Classes,
-  Generics.Collections,
-  Generics.Defaults,
-  uStructures,
-  uSettings
-{$ENDIF}
-  ;
+  uSettings;
 
 type
   TMain = class(TForm)
@@ -785,10 +758,8 @@ implementation
 
 uses DateUtils, uParser, uSettingsAdv, uSearch, uTextureBase, uDepot,
      uUART, uAbout, Clipbrd, StrUtils, uTexRandomizer, uUtilities, uLanguages, uData, uKeyboard, uStart
-{$IFNDEF FPC}, JPEG{$ENDIF}
-{$IFDEF MSWINDOWS}, uUpdater{$ENDIF};
+{$IFDEF ENABLE_UPDATER}, uUpdater{$ENDIF};
 
-{$IFDEF FPC}
 function CmpIntDescFPC(constref Left, Right: Integer): Integer;
 begin
   Result := Right - Left;
@@ -803,9 +774,8 @@ function CmpTrainFPC(constref L, R: TTrain): Integer;
 begin
   Result := CompareTrainNames(Pointer(L), Pointer(R));
 end;
-{$ENDIF}
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 procedure TMain.actAboutExecute(Sender: TObject);
 begin
@@ -1136,7 +1106,7 @@ end;
 
 procedure TMain.actCheckUpdateExecute(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
+{$IFDEF ENABLE_UPDATER}
   if edUpdateInterval.Value < 0 then
     TfrmUpdater.UpdateProgram(True)
   else
@@ -1571,18 +1541,7 @@ var
 begin
   if Indexes <> nil then
   begin
-{$IFDEF FPC}
     Indexes.Sort(TComparer<Integer>.Construct(@CmpIntDescFPC));
-{$ELSE}
-    Indexes.Sort(
-      TComparer<Integer>.Construct(
-        function(const Left, Right: Integer): Integer
-        begin
-          Result := Right-Left;
-        end
-      )
-    );
-{$ENDIF}
 
     for i := 0 to Indexes.Count-1 do
       Train.Vehicles.Extract(Train.Vehicles[Indexes[i]]);
@@ -1880,7 +1839,7 @@ end;
 procedure TMain.btnCheckUpdateMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-{$IFDEF MSWINDOWS}
+{$IFDEF ENABLE_UPDATER}
   if ssRight in Shift then
     TfrmUpdater.UpdateProgram(True);
 {$ENDIF}
@@ -2645,11 +2604,7 @@ begin
     tvSCN.SetFocus;
   end;
 
-{$IFDEF FPC}
   tvSCN.AlphaSort;
-{$ELSE}
-  tvSCN.Items.AlphaSort;
-{$ENDIF}
   tvSCN.Items.EndUpdate;
 end;
 
@@ -2691,23 +2646,9 @@ begin
     lbDepot.Clear;
 
     if miSortByVehicleName.Checked then
-{$IFDEF FPC}
       Data.Depot.Sort(TComparer<TTrain>.Construct(@CmpVehFPC))
     else
       Data.Depot.Sort(TComparer<TTrain>.Construct(@CmpTrainFPC));
-{$ELSE}
-      Data.Depot.Sort(TComparer<TTrain>.Construct(
-          function (const L, R: TTrain): integer
-          begin
-            result := CompareVehicleNames(L, R);
-          end))
-    else
-      Data.Depot.Sort(TComparer<TTrain>.Construct(
-          function (const L, R: TTrain): integer
-          begin
-            result := CompareTrainNames(L, R);
-          end));
-{$ENDIF}
 
     for i := 0 to Data.Depot.Count-1 do
       if Data.Depot[i].TrainName.Length > 0 then
@@ -2785,11 +2726,7 @@ end;
 procedure TMain.FormShow(Sender: TObject);
 begin
   TfrmStart.GetInstance.UpdateLabel(Lang.LabelStr(TEXT_LOAD_SETTINGS));
-{$IFDEF FPC}
   TDepotThread.Create(False);
-{$ELSE}
-  TDepotThread.Create;
-{$ENDIF}
   DefaultSettings;
   Settings.ReadSettings;
   ReloadSettingsState;
@@ -3270,18 +3207,10 @@ begin
     meTimetable.Text := '';
 
     if (Train.TimeTable.Length > 0) and (FileExists(Util.DIR + 'scenery/' + Train.TimeTable + '.txt')) then
-{$IFDEF FPC}
       meTimetable.Text := EnsureUTF8(ReadFileRaw(Util.DIR + 'scenery/' + Train.TimeTable + '.txt'))
-{$ELSE}
-      meTimetable.Lines.LoadFromFile(Util.DIR + 'scenery/' + Train.TimeTable + '.txt')
-{$ENDIF}
     else
       if FileExists(Util.DIR + 'scenery/' + Train.TrainName + '.txt') then
-{$IFDEF FPC}
         meTimetable.Text := EnsureUTF8(ReadFileRaw(Util.DIR + 'scenery/' + Train.TrainName + '.txt'));
-{$ELSE}
-        meTimetable.Lines.LoadFromFile(Util.DIR + 'scenery/' + Train.TrainName + '.txt' );
-{$ENDIF}
 
     meTimetable.Lines.EndUpdate;
 
@@ -3758,11 +3687,7 @@ begin
   Width := (tsMain.Width div 2) - 270;
   pnlLeftMargin1.Width := Width;
   pnlLeftMargin2.Width := Width;
-{$IFDEF FPC}
   pnlGraphic.BorderSpacing.Left := Clamp(tsGraphics.Width div 2 - 435,0,800);
-{$ELSE}
-  pnlGraphic.Margins.Left := Clamp(tsGraphics.Width div 2 - 435,0,800);
-{$ENDIF}
 end;
 
 procedure TMain.pcTrainsChange(Sender: TObject);

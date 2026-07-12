@@ -23,7 +23,6 @@ unit uSettingsAdv;
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -38,25 +37,7 @@ uses
   Spin,
   SysUtils,
   Variants,
-  Classes
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.StdCtrls,
-  Vcl.ExtCtrls,
-  System.Actions,
-  Vcl.ActnList,
-  Vcl.ComCtrls,
-  Vcl.Samples.Spin,
-  SysUtils,
-  Variants,
-  Classes
-{$ENDIF}
-  ;
+  Classes;
 
 type
   TfrmSettingsAdv = class(TForm)
@@ -122,7 +103,7 @@ implementation
 
 uses uUtilities, uLanguages, uMain, uStructures;
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 procedure TfrmSettingsAdv.actAddVehiclesCategoryExecute(Sender: TObject);
 var

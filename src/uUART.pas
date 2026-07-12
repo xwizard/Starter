@@ -23,7 +23,6 @@ unit uUART;
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -38,21 +37,6 @@ uses
   SysUtils,
   Variants,
   Classes
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.StdCtrls,
-  Vcl.ExtCtrls,
-  Vcl.Grids,
-  Vcl.ValEdit,
-  SysUtils,
-  Variants,
-  Classes
-{$ENDIF}
   ;
 
 type
@@ -88,7 +72,7 @@ implementation
 
 uses uMain;
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 function TfrmUART.BoolToStr(const Value:Boolean):string;
 begin

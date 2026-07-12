@@ -22,12 +22,7 @@ unit uLanguages;
 interface
 
 uses
-{$IFDEF FPC}
-  Forms
-{$ELSE}
-  VCL.Forms
-{$ENDIF}
-  ;
+  Forms;
 
 type
   TLabels = (TEXT_CAR_NO,TEXT_AI_TRAIN,TEXT_KEY,TEXT_KEY_DESC,
@@ -99,12 +94,8 @@ var
 implementation
 
 uses SysUtils, uMain, Classes, StrUtils,
-{$IFDEF FPC}
      StdCtrls, ActnList, ComCtrls, CheckLst,
-{$ELSE}
-     VCL.StdCtrls, VCL.ActnList, VCL.ComCtrls, VCL.CheckLst,
-{$ENDIF}
-     ExtCtrls, typinfo, uUtilities, uData, uStructures, RTTI;
+     ExtCtrls, typinfo, uUtilities, uData, uStructures;
 
 { TLanguages }
 
@@ -113,11 +104,7 @@ var
   i : Integer;
 begin
   for i := 0 to High(LabelsArray) do
-{$IFDEF FPC}
     LabelsArray[i,0] := GetEnumName(TypeInfo(TLabels), i);
-{$ELSE}
-    LabelsArray[i,0] := TRttiEnumerationType.GetName<TLabels>(TLabels(i));
-{$ENDIF}
 end;
 
 procedure TLang.StringsLoad;

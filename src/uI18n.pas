@@ -3,19 +3,11 @@ unit uI18n;
 interface
 
 uses
-{$IFDEF FPC}
   SysUtils,
   Classes,
   Generics.Collections,
   fpjson,
   jsonparser;
-{$ELSE}
-  System.SysUtils,
-  System.Classes,
-  System.Generics.Collections,
-  System.JSON,
-  System.IOUtils;
-{$ENDIF}
 
 type
   TI18n = class
@@ -62,7 +54,6 @@ begin
     Result := 'en';
 end;
 
-{$IFDEF FPC}
 procedure TI18n.LoadJsonObject(const Prefix: string; Obj: TJSONObject);
 var
   i: Integer;
@@ -94,51 +85,7 @@ begin
     end;
   end;
 end;
-{$ELSE}
-procedure TI18n.LoadJsonObject(const Prefix: string; Obj: TJSONObject);
-var
-  Pair: TJSONPair;
-  Key, FullKey: string;
-  V: TJSONValue;
-begin
-  for Pair in Obj do
-  begin
-    Key := Pair.JsonString.Value;
-    V := Pair.JsonValue;
 
-    if Prefix = '' then
-      FullKey := Key
-    else
-      FullKey := Prefix + '.' + Key;
-
-    if V is TJSONString then
-    begin
-      FMap.AddOrSetValue(FullKey, TJSONString(V).Value);
-    end
-    else if V is TJSONObject then
-    begin
-      LoadJsonObject(FullKey, TJSONObject(V));
-    end
-    else if V is TJSONNumber then
-    begin
-      FMap.AddOrSetValue(FullKey, TJSONNumber(V).ToString);
-    end
-    else if V is TJSONBool then
-    begin
-      if TJSONBool(V).AsBoolean then
-        FMap.AddOrSetValue(FullKey, 'true')
-      else
-        FMap.AddOrSetValue(FullKey, 'false');
-    end
-    else if V is TJSONArray then
-    begin
-      // future-proof: array handling
-    end;
-  end;
-end;
-{$ENDIF}
-
-{$IFDEF FPC}
 function TI18n.LoadJsonFile(const FileName: string): Boolean;
 var
   S: string;
@@ -168,29 +115,6 @@ begin
     Root.Free;
   end;
 end;
-{$ELSE}
-function TI18n.LoadJsonFile(const FileName: string): Boolean;
-var
-  S: string;
-  Root: TJSONValue;
-begin
-  Result := False;
-  if not FileExists(FileName) then
-    Exit;
-
-  S := TFile.ReadAllText(FileName, TEncoding.UTF8);
-  Root := TJSONObject.ParseJSONValue(S);
-  try
-    if Root is TJSONObject then
-    begin
-      LoadJsonObject('', TJSONObject(Root));
-      Result := True;
-    end;
-  finally
-    Root.Free;
-  end;
-end;
-{$ENDIF}
 
 function TI18n.Load(const BaseDir, SceneryId, Lang: string; const FallbackLang: string): Boolean;
 var

@@ -98,13 +98,9 @@ type
 implementation
 
 uses uMain, uSettingsAdv, uLanguages, SysUtils,
-{$IFDEF FPC}
      Forms, FileUtil,
-{$ELSE}
-     WinTypes, Vcl.Forms,
-{$ENDIF}
      Dialogs, DateUtils, uUtilities, StdCtrls
-{$IFDEF MSWINDOWS}, uUpdater{$ENDIF};
+{$IFDEF ENABLE_UPDATER}, uUpdater{$ENDIF};
 
 
 
@@ -179,12 +175,10 @@ begin
     Result := 0;
 end;
 
-{$IFDEF FPC}
 function CompareFileAgesFPC(constref L, R: TFileAge): Integer;
 begin
   Result := CompareFileAges(L, R);
 end;
-{$ENDIF}
 
 procedure TSettings.LoadEXE;
 var
@@ -212,15 +206,7 @@ begin
   end;
   SysUtils.FindClose(SR);
 
-{$IFDEF FPC}
   ExeAges.Sort(TComparer<TFileAge>.Construct(@CompareFileAgesFPC));
-{$ELSE}
-  ExeAges.Sort(TComparer<TFileAge>.Construct(
-          function (const L, R: TFileAge): Integer
-          begin
-            result := CompareFileAges(L, R);
-          end));
-{$ENDIF}
 
   for i := 0 to ExeAges.Count-1 do
     Main.cbEXE.Items.Add(ExeAges[i].Name);
@@ -1027,7 +1013,7 @@ begin
 
     if Main.lbVersion.Tag < DaysBetween(Now,0)- Abs(StrToInt(Main.edUpdateInterval.Text))+1 then
     begin
-{$IFDEF MSWINDOWS}
+{$IFDEF ENABLE_UPDATER}
       if StrToInt(Main.edUpdateInterval.Text) >= 0 then
         TfrmUpdater.UpdateProgram(False,False)
       else
@@ -1501,17 +1487,10 @@ end;
 procedure TSettings.ChangeHDR(const Reinhard:Boolean=True);
 begin
   try
-{$IFDEF FPC}
     if Reinhard then
       CopyFile(Util.Dir + 'starter/Reinhard.glsl', Util.Dir + 'shaders/tonemapping.glsl')
     else
       CopyFile(Util.Dir + 'starter/ACESFilm.glsl', Util.Dir + 'shaders/tonemapping.glsl');
-{$ELSE}
-    if Reinhard then
-      CopyFile(PChar(Util.Dir + 'starter/Reinhard.glsl'),PChar(Util.Dir + 'shaders/tonemapping.glsl'),False)
-    else
-      CopyFile(PChar(Util.Dir + 'starter/ACESFilm.glsl'),PChar(Util.Dir + 'shaders/tonemapping.glsl'),False);
-{$ENDIF}
   except
     on E: Exception do
       ShowMessage(Lang.LabelStr(TEXT_ALGORITHM_FAULT) + ' ' + E.Message);

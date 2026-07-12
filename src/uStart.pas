@@ -23,7 +23,6 @@ unit uStart;
 interface
 
 uses
-{$IFDEF FPC}
   LCLIntf,
   LCLType,
   LMessages,
@@ -36,24 +35,7 @@ uses
   StdCtrls,
   SysUtils,
   Variants,
-  Classes
-{$ELSE}
-  Winapi.Windows,
-  Winapi.Messages,
-  Vcl.Graphics,
-  Vcl.Controls,
-  Vcl.Forms,
-  Vcl.Dialogs,
-  Vcl.Imaging.pngimage,
-  Vcl.ExtCtrls,
-  Vcl.ComCtrls,
-  Vcl.StdCtrls,
-  Vcl.WinXCtrls,
-  SysUtils,
-  Variants,
-  Classes
-{$ENDIF}
-  ;
+  Classes;
 
 type
   TfrmStart = class(TForm)
@@ -69,7 +51,7 @@ type
 
 implementation
 
-{$IFDEF FPC}{$R *.lfm}{$ELSE}{$R *.dfm}{$ENDIF}
+{$R *.lfm}
 
 class function TfrmStart.GetInstance: TfrmStart;
 begin

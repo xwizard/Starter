@@ -92,8 +92,6 @@ type
 
 implementation
 
-{$IFNDEF FPC}uses Windows;{$ENDIF}
-
 procedure MakeIdentTable;
 var
   I : Char;
