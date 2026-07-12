@@ -338,7 +338,7 @@ begin
 
     Lexer.NextNoJunk;
     Result.Dir := GetToken;
-    Result.Dir := StringReplace(Result.Dir,'/','/',[]);
+    Result.Dir := StringReplace(Result.Dir,'\','/',[rfReplaceAll]);
 
     Lexer.NextNoJunk;
     Result.ReplacableSkin := ChangeFileExt(GetToken,'');
