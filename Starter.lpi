@@ -38,6 +38,10 @@
       <Unit>
         <Filename Value="src/uAbout.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmAbout"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uAbout"/>
       </Unit>
       <Unit>
         <Filename Value="src/uData.pas"/>
@@ -62,6 +66,10 @@
       <Unit>
         <Filename Value="src/uKeyboard.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmKeyboard"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uKeyboard"/>
       </Unit>
       <Unit>
         <Filename Value="src/uLanguages.pas"/>
@@ -78,6 +86,10 @@
       <Unit>
         <Filename Value="src/uMain.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="Main"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uMain"/>
       </Unit>
       <Unit>
         <Filename Value="src/uParser.pas"/>
@@ -86,10 +98,18 @@
       <Unit>
         <Filename Value="src/uRules.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmRules"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uRules"/>
       </Unit>
       <Unit>
         <Filename Value="src/uSearch.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSearch"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uSearch"/>
       </Unit>
       <Unit>
         <Filename Value="src/uSettings.pas"/>
@@ -98,10 +118,18 @@
       <Unit>
         <Filename Value="src/uSettingsAdv.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmSettingsAdv"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uSettingsAdv"/>
       </Unit>
       <Unit>
         <Filename Value="src/uStart.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmStart"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uStart"/>
       </Unit>
       <Unit>
         <Filename Value="src/uStructures.pas"/>
@@ -110,14 +138,26 @@
       <Unit>
         <Filename Value="src/uTexRandomizer.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmTexRandomizer"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uTexRandomizer"/>
       </Unit>
       <Unit>
         <Filename Value="src/uTextureBase.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmTextureBase"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uTextureBase"/>
       </Unit>
       <Unit>
         <Filename Value="src/uUART.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmUART"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uUART"/>
       </Unit>
       <Unit>
         <Filename Value="src/uUpdater.pas"/>
