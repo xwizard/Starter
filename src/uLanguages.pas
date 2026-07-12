@@ -240,12 +240,12 @@ end;
 
 function TLang.LabelStr(const ID:TLabels):string;
 begin
-  Result := LabelsArray[Ord(ID),1];
+  Result := EnsureUTF8(LabelsArray[Ord(ID),1]);
 end;
 
 function TLang.LabelStr(const ID:TLabels; const Args: array of const):string;
 begin
-  Result := Format(LabelsArray[Ord(ID),1],Args);
+  Result := Format(EnsureUTF8(LabelsArray[Ord(ID),1]),Args);
 end;
 
 class procedure TLang.ChangeLoads(const LangStr:string);
