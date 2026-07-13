@@ -569,7 +569,7 @@ begin
         begin
           if (SameText(Lexer.Token, 'config')) then
           begin
-            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer);
+            result := result + Copy(FSource,EndPointer,Lexer.TokenPos-EndPointer);
 
             while not SameText(Lexer.Token, 'endconfig') do
               Lexer.NextNoJunk;
@@ -579,7 +579,7 @@ begin
           //////////////////////////
           if (SameText(Lexer.Token, 'movelight')) then
           begin
-            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer);
+            result := result + Copy(FSource,EndPointer,Lexer.TokenPos-EndPointer);
             Lexer.NextNoJunk;
             EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
           end
@@ -589,7 +589,7 @@ begin
             Token := GetToken;
             if SameText(Token, 'scenario.weather.temperature') then
             begin
-              result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-27);
+              result := result + Copy(FSource,EndPointer,Lexer.TokenPos-EndPointer-27);
               Lexer.NextNoJunk;
               GetToken;
               EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
@@ -597,7 +597,7 @@ begin
             else
             if SameText(Token, 'scenario.time.override') then
             begin
-              result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-22);
+              result := result + Copy(FSource,EndPointer,Lexer.TokenPos-EndPointer-22);
               Lexer.NextNoJunk;
               GetToken;
               EndPointer := Lexer.TokenPos + Lexer.TokenLen + 1;
@@ -606,7 +606,7 @@ begin
           /////////////////
           if SameText(Lexer.Token, 'time') then
           begin
-            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-1);
+            result := result + Copy(FSource,EndPointer,Lexer.TokenPos-EndPointer);
             while not SameText(Lexer.Token, 'endtime') do
               Lexer.NextNoJunk;
             GetToken;
@@ -615,7 +615,7 @@ begin
           else
           if SameText(Lexer.Token, 'atmo') then
           begin
-            result := result + Copy(Text,EndPointer,Lexer.TokenPos-EndPointer-1);
+            result := result + Copy(FSource,EndPointer,Lexer.TokenPos-EndPointer);
 
             while not SameText(Lexer.Token, 'endatmo') do
               Lexer.NextNoJunk;
@@ -627,7 +627,7 @@ begin
         Lexer.NextNoSpace;
       end;
 
-      Result := Result + Copy(Text,EndPointer,Text.Length);
+      Result := Result + Copy(FSource,EndPointer,FSource.Length);
       Result := 'config ' + #13#10 + 'endconfig' + #13#10 + Result;
       ConfigPos := 8;
 
